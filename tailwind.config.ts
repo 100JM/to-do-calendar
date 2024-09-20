@@ -8,9 +8,9 @@ const config: Config = {
   ],
   theme: {
     extend: {
-      colors: {
-        background: "var(--background)",
-        foreground: "var(--foreground)",
+      fontFamily: {
+        sans: ['IBM Plex Sans KR', 'sans-serif']
+        // sans: ['Gmarket Sans', 'sans-serif']
       },
     },
   },
