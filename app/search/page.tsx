@@ -3,6 +3,8 @@
 import { useRef } from "react";
 import { useRouter } from 'next/navigation';
 
+import useModalStore from "../store/modal";
+
 import { AnimatePresence, motion } from 'framer-motion';
 import SearchIcon from '@mui/icons-material/Search';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
@@ -12,8 +14,11 @@ export default function SearchPage() {
     const searchedmyTodoList: Array<any> = [];
     const searchInputRef = useRef<HTMLInputElement | null>(null);
 
+    const { setIsTodoButton } = useModalStore();
+
     const handleBackBtn = () => {
         router.push('/');
+        setIsTodoButton(false);
     };
 
     const subVariants = {

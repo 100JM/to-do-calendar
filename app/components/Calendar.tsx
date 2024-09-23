@@ -1,8 +1,9 @@
 'use client';
 
-import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
+import useModalStore from '../store/modal';
+import useCalendarMenu from '../store/calendarMenu';
 import ImportantTodoList from './ImportantTodoList';
 import TodoListAll from './TodoListAll';
 
@@ -31,10 +32,15 @@ import SpeedDialAction from '@mui/material/SpeedDialAction';
 
 const Calendar: React.FC = () => {
     const router = useRouter();
-    const [bottomMenu, setBottomMenu] = useState<string>('calendar');
+
+    const { bottomMenu, setBottomMenu } = useCalendarMenu();
+    const { setShowTodoDialog, setIsTodoButton, setShowAddArea } = useModalStore();
 
     const handleSearchBtn = () => {
         router.push('search');
+        setIsTodoButton(true);
+        setShowAddArea(false);
+        setIsTodoButton(false);
     };
 
     const dateClickEvt = (arg: DateClickArg) => {
@@ -52,6 +58,7 @@ const Calendar: React.FC = () => {
             };
         });
 
+        setShowTodoDialog(true);
         console.log(todoEventList);
     };
 
@@ -66,7 +73,15 @@ const Calendar: React.FC = () => {
     const handleBottomMenuChange = (event: React.SyntheticEvent, newValue: string) => {
         if (newValue !== 'todo') {
             setBottomMenu(newValue);
+        } else {
+            todoButtonEvt();
         }
+    };
+
+    const todoButtonEvt = () => {
+        setIsTodoButton(true);
+        setShowTodoDialog(true);
+        setShowAddArea(true);
     };
 
     const slideVariants = {
@@ -144,7 +159,7 @@ const Calendar: React.FC = () => {
                     direction="up"
                 >
                     <SpeedDialAction key="calendar" icon={<CalendarMonthIcon />} tooltipTitle="캘린더" onClick={() => desktopMenuEvt('calendar')} />
-                    <SpeedDialAction key="todo" icon={<AddCircleOutlineIcon />} tooltipTitle="일정 추가" />
+                    <SpeedDialAction key="todo" icon={<AddCircleOutlineIcon />} tooltipTitle="일정 추가" onClick={() => todoButtonEvt()} />
                     <SpeedDialAction key="all" icon={<FormatListBulletedIcon />} tooltipTitle="일정 목록" onClick={() => desktopMenuEvt('all')} />
                     <SpeedDialAction
                         key="importantTodo"
@@ -191,7 +206,7 @@ const Calendar: React.FC = () => {
                         }}
                     >
                         <BottomNavigationAction label="캘린더" value="calendar" icon={<CalendarMonthIcon />} />
-                        <BottomNavigationAction label="일정 작성" value="todo" icon={<AddCircleOutlineIcon />} sx={{ color: "#DC143C !important" }} />
+                        <BottomNavigationAction label="일정 추가" value="todo" icon={<AddCircleOutlineIcon />} sx={{ color: "#DC143C !important" }} />
                         <BottomNavigationAction label="일정 목록" value="all" icon={<FormatListBulletedIcon />} />
                         <BottomNavigationAction
                             label="중요 일정"

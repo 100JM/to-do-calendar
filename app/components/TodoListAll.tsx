@@ -85,7 +85,13 @@ const TodoListAll: React.FC = () => {
             return false;
         });
 
-        setTodolist(filteredList);
+        // setTodolist(filteredList);
+        setTodolist((prev) => {
+            if (JSON.stringify(prev) !== JSON.stringify(filteredList)) {
+                return filteredList;
+            }
+            return prev;
+        });
     }, [filter, myTodoList]);
 
     return (
