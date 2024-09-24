@@ -1,8 +1,10 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import { unstable_batchedUpdates } from 'react-dom';
 
 import useModalStore from '../store/modal';
+import useCalendarMenu from '../store/calendarMenu';
 import DialogContentsDiv from './dialog/DialogContentsDiv';
 import AddArea from './dialog/AddArea';
 
@@ -29,43 +31,54 @@ import { faClockRotateLeft, faThumbTack, faCircleXmark, faCirclePlus, faTrash, f
 const koLocale: string = dayjs.locale('ko');
 
 const TodoDialog: React.FC = () => {
-    const { showTodoDialog, setShowTodoDialog, showAddArea, setShowAddArea } = useModalStore();
+    const { showTodoDialog, setShowTodoDialog, showAddArea, setShowAddArea, isTodoButton, setIsTodoButton } = useModalStore();
+    const { bottomMenu, setBottomMenu } = useCalendarMenu();
+
+    const handleCloseModal = () => {
+        setShowTodoDialog(false);
+        setIsTodoButton(false);
+        setShowAddArea(false);
+    };
 
     return (
-        <Dialog
-            open={showTodoDialog}
-            onClose={() => setShowTodoDialog(false)}
-            maxWidth="md"
-            fullWidth={true}
-        >
-            {!showAddArea &&
-                <>
-                    <DialogTitle className="flex justify-between items-center">
-                        <span className="text-sm font-semibold" style={{ color: "#1a252f" }}>{dayjs('2024-09-23').format('YYYY년 MM월 DD일 dddd')}</span>
-                        <div>
-                            <button type="button" className="p-1" style={{ color: "#2c3e50" }} onClick={() => setShowTodoDialog(false)}>
-                                <FontAwesomeIcon icon={faCircleXmark as IconProp} />
-                            </button>
-                            <button type="button" className="p-1" style={{ color: "#2c3e50" }} onClick={() => setShowAddArea(true)}>
-                                <FontAwesomeIcon icon={faCirclePlus as IconProp} />
-                            </button>
-                        </div>
-                    </DialogTitle>
-                    <DialogContent>
-                        <div className="text-gray-700 mb-4">
-                            <DialogContentsDiv>
-                                <div className="flex items-center justify-center min-h-80">
-                                    <span className="text-slate-500">등록된 일정이 없습니다.</span>
+        <>
+            {showTodoDialog &&
+                <Dialog
+                    open={showTodoDialog}
+                    onClose={handleCloseModal}
+                    maxWidth="md"
+                    fullWidth={true}
+                >
+                    {!showAddArea &&
+                        <>
+                            <DialogTitle className="flex justify-between items-center">
+                                <span className="text-sm font-semibold" style={{ color: "#1a252f" }}>{dayjs('2024-09-23').format('YYYY년 MM월 DD일 dddd')}</span>
+                                <div>
+                                    <button type="button" className="p-1" style={{ color: "#2c3e50" }} onClick={() => setShowTodoDialog(false)}>
+                                        <FontAwesomeIcon icon={faCircleXmark as IconProp} />
+                                    </button>
+                                    <button type="button" className="p-1" style={{ color: "#2c3e50" }} onClick={() => setShowAddArea(true)}>
+                                        <FontAwesomeIcon icon={faCirclePlus as IconProp} />
+                                    </button>
                                 </div>
-                            </DialogContentsDiv>
-                        </div>
-                    </DialogContent>
-                </>
+                            </DialogTitle>
+                            <DialogContent>
+                                <div className="text-gray-700 mb-4">
+                                    <DialogContentsDiv>
+                                        <div className="flex items-center justify-center min-h-80">
+                                            <span className="text-slate-500">등록된 일정이 없습니다.</span>
+                                        </div>
+                                    </DialogContentsDiv>
+                                </div>
+                            </DialogContent>
+                        </>
+                    }
+                    {showAddArea &&
+                        <AddArea />
+                    }
+                </Dialog>
             }
-            {showAddArea &&
-                <AddArea />
-            }
-        </Dialog>
+        </>
     );
 };
 

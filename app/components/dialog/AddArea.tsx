@@ -26,15 +26,17 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { IconProp } from '@fortawesome/fontawesome-svg-core'
 import { faClockRotateLeft, faThumbTack, faCircleXmark, faCirclePlus, faTrash, faCircleCheck, faPenToSquare, faMapLocationDot, faMagnifyingGlass, faArrowRotateLeft } from '@fortawesome/free-solid-svg-icons';
 
+const koLocale: string = dayjs.locale('ko');
+
 const AddArea: React.FC = () => {
-    const { bottomMenu, setBottomMenu } = useCalendarMenu();
+    const { bottomMenu } = useCalendarMenu();
     const { isTodoButton, setShowAddArea, setShowTodoDialog, setIsTodoButton } = useModalStore();
 
     const handleCloseModal = () => {
         setShowTodoDialog(false);
         setIsTodoButton(false);
         setShowAddArea(false);
-    }
+    };
 
     return (
         <>
@@ -51,10 +53,10 @@ const AddArea: React.FC = () => {
                     </IconButton>
                 }
                 <div className='p-1'>
-                        <button className="p-2">
-                            {/* <FontAwesomeIcon icon={faCircleCheck as IconProp} style={{ color: openColorBar.selectedColor }} onClick={submitTask} /> */}
-                            <FontAwesomeIcon icon={faCircleCheck as IconProp} />
-                        </button>
+                    <button className="p-2">
+                        {/* <FontAwesomeIcon icon={faCircleCheck as IconProp} style={{ color: openColorBar.selectedColor }} onClick={submitTask} /> */}
+                        <FontAwesomeIcon icon={faCircleCheck as IconProp} />
+                    </button>
                     {/* {selectedDateEvtInfo.id ?
                         <>
                             <button className="p-2">
@@ -71,6 +73,10 @@ const AddArea: React.FC = () => {
                     } */}
                 </div>
             </DialogTitle>
+            <DialogContent>
+                <div className="text-gray-700 mb-4">
+                </div>
+            </DialogContent>
         </>
     );
 };
