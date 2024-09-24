@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 
 import useModalStore from '../store/modal';
 import useCalendarMenu from '../store/calendarMenu';
+import useDateStore from '../store/date';
 import ImportantTodoList from './ImportantTodoList';
 import TodoListAll from './TodoListAll';
 
@@ -35,13 +36,16 @@ const Calendar: React.FC = () => {
 
     const { bottomMenu, setBottomMenu } = useCalendarMenu();
     const { setShowTodoDialog, setIsTodoButton, setShowAddArea } = useModalStore();
-
+    const { setClickedDate } = useDateStore();
+    
     const handleSearchBtn = () => {
         router.push('search');
         setIsTodoButton(true);
         setShowAddArea(false);
         setIsTodoButton(false);
     };
+
+    const defaultStartDate: string = new Date().toISOString();
 
     const dateClickEvt = (arg: DateClickArg) => {
         arg.jsEvent.stopPropagation();
@@ -58,6 +62,7 @@ const Calendar: React.FC = () => {
             };
         });
 
+        setClickedDate(arg.dateStr);
         setShowTodoDialog(true);
         console.log(todoEventList);
     };
