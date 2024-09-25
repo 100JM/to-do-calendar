@@ -41,7 +41,6 @@ interface DateStore {
         isKorea: boolean;
         user: any;
     };
-    clickedDate: string;
     setClickedDate: (date: string) => void;
     setTodayDate: () => void;
 }
@@ -89,8 +88,14 @@ const useDateStore = create<DateStore>((set) => ({
         isKorea: true,
         user: 0,
     },
-    clickedDate: '',
-    setClickedDate: (date: string) => set({ clickedDate: date }),
+    setClickedDate: (date: string) => 
+        set((state) => ({
+            selectedDate: {
+                ...state.selectedDate,
+                start: date,
+                end: date
+            },
+        })),
     setTodayDate: () =>
         set((state) => ({
             selectedDate: {

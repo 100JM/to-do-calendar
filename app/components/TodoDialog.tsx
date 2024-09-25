@@ -4,7 +4,6 @@ import { useEffect, useRef, useState } from 'react';
 import { unstable_batchedUpdates } from 'react-dom';
 
 import useModalStore from '../store/modal';
-import useCalendarMenu from '../store/calendarMenu';
 import useDateStore from '../store/date';
 import DialogContentsDiv from './dialog/DialogContentsDiv';
 import AddArea from './dialog/AddArea';
@@ -33,8 +32,7 @@ const koLocale: string = dayjs.locale('ko');
 
 const TodoDialog: React.FC = () => {
     const { showTodoDialog, setShowTodoDialog, showAddArea, setShowAddArea, isTodoButton, setIsTodoButton } = useModalStore();
-    const { bottomMenu, setBottomMenu } = useCalendarMenu();
-    const { selectedDate, clickedDate } = useDateStore();
+    const { selectedDate } = useDateStore();
 
     const handleCloseModal = () => {
         setShowTodoDialog(false);
@@ -54,7 +52,7 @@ const TodoDialog: React.FC = () => {
                     {!showAddArea &&
                         <>
                             <DialogTitle className="flex justify-between items-center">
-                                <span className="text-sm font-semibold" style={{ color: "#1a252f" }}>{dayjs(clickedDate).format('YYYY년 MM월 DD일 dddd')}</span>
+                                <span className="text-sm font-semibold" style={{ color: "#1a252f" }}>{dayjs(selectedDate.start).format('YYYY년 MM월 DD일 dddd')}</span>
                                 <div>
                                     <button type="button" className="p-1" style={{ color: "#2c3e50" }} onClick={() => setShowTodoDialog(false)}>
                                         <FontAwesomeIcon icon={faCircleXmark as IconProp} />

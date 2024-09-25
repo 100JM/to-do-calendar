@@ -36,7 +36,7 @@ const Calendar: React.FC = () => {
 
     const { bottomMenu, setBottomMenu } = useCalendarMenu();
     const { setShowTodoDialog, setIsTodoButton, setShowAddArea } = useModalStore();
-    const { setClickedDate } = useDateStore();
+    const { setClickedDate, setTodayDate } = useDateStore();
     
     const handleSearchBtn = () => {
         router.push('search');
@@ -87,6 +87,7 @@ const Calendar: React.FC = () => {
         setIsTodoButton(true);
         setShowTodoDialog(true);
         setShowAddArea(true);
+        setTodayDate();
     };
 
     const slideVariants = {

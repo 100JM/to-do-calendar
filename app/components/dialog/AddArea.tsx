@@ -1,11 +1,19 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import 'leaflet/dist/leaflet.css';
 
 import useModalStore from '@/app/store/modal';
 import useCalendarMenu from '@/app/store/calendarMenu';
 import useDateStore from '@/app/store/date';
+import useToastStore from '@/app/store/toast';
 import DialogContentsDiv from './DialogContentsDiv';
+import DialogUiColor from './DialogUiColor';
+import UiColorButtons from './UiColorButtons';
+import KakaoAddrSearchForm from './KakaoAddrSearchForm';
+import KakaoMap from './KakaoMap';
+import OverseaAddrSearchForm from './OverseaAddrSearchForm';
+import OverseaMap from './OverseaMap';
 
 import IconButton from '@mui/material/IconButton';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
@@ -71,6 +79,7 @@ const AddArea: React.FC = () => {
     const { bottomMenu } = useCalendarMenu();
     const { isTodoButton, setShowAddArea, setShowTodoDialog, setIsTodoButton } = useModalStore();
     const { selectedDateEventInfo, selectedDate } = useDateStore();
+    const { showToast } = useToastStore();
 
     const defaultStartDateTime = dayjs().set('hour', 9).set('minute', 0).startOf('minute').format('HH:mm');
     const defaultEndDateTime = dayjs().set('hour', 18).set('minute', 0).startOf('minute').format('HH:mm');
@@ -96,6 +105,7 @@ const AddArea: React.FC = () => {
         overseasLng: 126.9780,
     });
     const [isKorea, setIsKorea] = useState<boolean>(true);
+    const [dateValueCheck, setDateValueCheck] = useState<boolean>(true);
 
     const dateRef = useRef<HTMLDivElement | null>(null);
     const timeRef = useRef<HTMLDivElement | null>(null);
@@ -132,7 +142,7 @@ const AddArea: React.FC = () => {
         setShowAddrSearch(isShow);
     };
 
-    const handleSetOverseaAddr = (address:any) => {
+    const handleSetOverseaAddr = (address: any) => {
         setMapCenter((prev) => {
             return {
                 ...prev,
@@ -140,12 +150,12 @@ const AddArea: React.FC = () => {
                 overseasLng: Number(address.lon)
             }
         });
-        
+
         setSelectedAddrOversea(address.display_name);
         handleShowAddrSearch(false);
     };
 
-    const handleSetKoreaAddr = (address:any) => {
+    const handleSetKoreaAddr = (address: any) => {
         setMapCenter((prev) => {
             return {
                 ...prev,
@@ -153,10 +163,10 @@ const AddArea: React.FC = () => {
                 koreaLng: address.x
             }
         });
-        
-        if(address.road_address_name) {
+
+        if (address.road_address_name) {
             setSelectedAddr(`${address.place_name}, ${address.road_address_name}`);
-        }else {
+        } else {
             setSelectedAddr(`${address.place_name}, ${address.address_name}`);
         }
 
@@ -223,6 +233,49 @@ const AddArea: React.FC = () => {
         }
     };
 
+    const handleStartDate = (date: Dayjs | null) => {
+        const start = dayjs(date).format('YYYY-MM-DD');
+        const end = ((toDoValueRef.current.end) as HTMLInputElement).value;
+
+        if (start > end) {
+            setDateValueCheck(false);
+        } else {
+            setDateValueCheck(true);
+        }
+    };
+
+    const handleEndDate = (date: Dayjs | null) => {
+        const end = dayjs(date).format('YYYY-MM-DD');
+        const start = ((toDoValueRef.current.start) as HTMLInputElement).value;
+
+        if (start > end) {
+            setDateValueCheck(false);
+        } else {
+            setDateValueCheck(true);
+        }
+    };
+
+    const handleSubmit = () => {
+        const checkDateInput = dateRef.current?.classList.contains('date-error');
+        const checkTimeInput = timeRef.current?.classList.contains('date-error');
+
+        if (!(toDoValueRef.current.title as HTMLInputElement).value) {
+            showToast('제목을 입력해주세요.', { type: 'success' });
+            (toDoValueRef.current.title as HTMLInputElement).focus();
+            return;
+        }
+
+
+
+        if (checkTimeInput || checkDateInput) {
+            showToast('시작일과 종료일이 올바르지 않습니다.', { type: 'error' });
+            return;
+        }
+
+        handleCloseModal();
+        showToast('일정이 등록되었습니다.', { type: 'success' });
+    };
+
     useEffect(() => {
         setOpenColorBar(prevState => ({
             ...prevState,
@@ -287,7 +340,7 @@ const AddArea: React.FC = () => {
                         </>
                         :
                         <button className="p-2">
-                            <FontAwesomeIcon icon={faCircleCheck as IconProp} style={{ color: openColorBar.selectedColor }} />
+                            <FontAwesomeIcon icon={faCircleCheck as IconProp} style={{ color: openColorBar.selectedColor }} onClick={handleSubmit} />
                         </button>
                     }
                 </div>
@@ -323,8 +376,9 @@ const AddArea: React.FC = () => {
                                 <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale={koLocale}>
                                     <DatePicker
                                         ref={dateRef}
-                                        value={dayjs(dateData.start)}
-                                        className={`w-22 sm:w-48 ${dayjs(dateData.start).format('YYYY-MM-DD') > dayjs(dateData.end).format('YYYY-MM-DD') ? 'date-error' : ''}`}
+                                        defaultValue={dayjs(dateData.start)}
+                                        onChange={(date) => handleStartDate(date)}
+                                        className={`w-22 sm:w-48 ${!dateValueCheck ? 'date-error' : ''}`}
                                         showDaysOutsideCurrentMonth
                                         format="YYYY-MM-DD"
                                         desktopModeMediaQuery="@media (min-width: 640px)"
@@ -336,7 +390,7 @@ const AddArea: React.FC = () => {
                                             },
                                             "& fieldset": { borderColor: openColorBar.selectedColor }
                                         }}
-                                        inputRef={(e:any) => toDoValueRef.current['start'] = e}
+                                        inputRef={(e: any) => toDoValueRef.current['start'] = e}
                                     />
                                     {!isAllday && <TimePicker
                                         ref={timeRef}
@@ -367,7 +421,8 @@ const AddArea: React.FC = () => {
                                 <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale={koLocale}>
                                     <DatePicker
                                         defaultValue={(dateData.allDay ? (dateData.start.split('T')[0] === dateData.end.split('T')[0] ? dayjs(dateData.end) : dayjs(dateData.end).add(-1, 'day')) : dayjs(dateData.end))}
-                                        className={`w-22 sm:w-48 ${dayjs(dateData.start).format('YYYY-MM-DD') > dayjs(dateData.end).format('YYYY-MM-DD') ? 'date-error' : ''}`}
+                                        onChange={(date) => handleEndDate(date)}
+                                        className={`w-22 sm:w-48 ${!dateValueCheck ? 'date-error' : ''}`}
                                         showDaysOutsideCurrentMonth
                                         format="YYYY-MM-DD"
                                         desktopModeMediaQuery="@media (min-width: 640px)"
@@ -379,7 +434,7 @@ const AddArea: React.FC = () => {
                                             },
                                             "& fieldset": { borderColor: openColorBar.selectedColor }
                                         }}
-                                        inputRef={(e:any) => toDoValueRef.current['end'] = e}
+                                        inputRef={(e: any) => toDoValueRef.current['end'] = e}
                                     />
                                     {!isAllday && <TimePicker
                                         className={
@@ -401,6 +456,119 @@ const AddArea: React.FC = () => {
                                 </LocalizationProvider>
                             </div>
                         </div>
+                    </DialogContentsDiv>
+                    <DialogContentsDiv>
+                        <div className="flex justify-between items-center my-1 px-1">
+                            <div>
+                                <FontAwesomeIcon icon={faThumbTack as IconProp} style={{ color: openColorBar.selectedColor }} />
+                                <span className="ml-2">중요일정</span>
+                            </div>
+                            <Switch
+                                color="primary"
+                                defaultChecked={dateData.important}
+                                sx={{
+                                    "& .MuiSwitch-thumb": { backgroundColor: openColorBar.selectedColor },
+                                    "& .MuiSwitch-track": { backgroundColor: openColorBar.selectedColor },
+                                    "& .Mui-checked+.MuiSwitch-track": { backgroundColor: openColorBar.selectedColor },
+                                }}
+                                inputRef={(e) => { toDoValueRef.current['important'] = e }}
+                            />
+                        </div>
+                    </DialogContentsDiv>
+                    <DialogContentsDiv>
+                        <DialogUiColor handleDraw={handleDraw} selectedColor={openColorBar.selectedColor} colorName={openColorBar.colorName} />
+                        <Drawer
+                            open={openColorBar.open}
+                            onClose={() => handleDraw(false)}
+                            anchor={"bottom"}
+                            style={{ zIndex: "9999" }}
+                            sx={{ "& .MuiDrawer-paperAnchorBottom": { maxHeight: "50%" } }}
+                        >
+                            <UiColorButtons onClick={handleTaskColor} selectedColor={openColorBar.selectedColor} />
+                        </Drawer>
+                    </DialogContentsDiv>
+                    <DialogContentsDiv>
+                        <div className="w-full flex justify-between items-center mt-1 px-1">
+                            <div>
+                                <FontAwesomeIcon icon={faMapLocationDot as IconProp} style={{ color: openColorBar.selectedColor }} />
+                                <span className="ml-2">위치</span>
+                            </div>
+                            <div>
+                                <button
+                                    className="border px-1 rounded mr-1 w-14 h-7"
+                                    style={{ borderColor: openColorBar.selectedColor, color: (isKorea ? '#fff' : openColorBar.selectedColor), backgroundColor: (isKorea ? openColorBar.selectedColor : 'transparent'), fontSize: "12px" }}
+                                    onClick={() => setIsKorea(true)}
+                                >
+                                    <span>국내</span>
+                                </button>
+                                <button
+                                    className="border px-1 rounded w-14 h-7"
+                                    style={{ borderColor: openColorBar.selectedColor, color: (!isKorea ? '#fff' : openColorBar.selectedColor), backgroundColor: (!isKorea ? openColorBar.selectedColor : 'transparent'), fontSize: "12px" }}
+                                    onClick={() => setIsKorea(false)}
+                                >
+                                    <span>해외</span>
+                                </button>
+                            </div>
+                        </div>
+                        {isKorea &&
+                            <>
+                                <div className="w-full flex justify-end items-center mt-2 mb-1 px-1">
+                                    <button className="border px-1 rounded mr-1 w-16 h-6" style={{ borderColor: openColorBar.selectedColor, color: openColorBar.selectedColor, fontSize: "12px" }} onClick={handleLocationDefault}>
+                                        <FontAwesomeIcon icon={faArrowRotateLeft as IconProp} style={{ color: openColorBar.selectedColor }} />
+                                        <span>초기화</span>
+                                    </button>
+                                    <button className="border px-1 rounded w-16 h-6" style={{ borderColor: openColorBar.selectedColor, color: openColorBar.selectedColor, fontSize: "12px" }} onClick={() => handleShowAddrSearch(true)}>
+                                        <FontAwesomeIcon icon={faMagnifyingGlass as IconProp} style={{ color: openColorBar.selectedColor }} />
+                                        <span>검색</span>
+                                    </button>
+                                    <Drawer
+                                        open={showAddrSearch}
+                                        onClose={() => handleShowAddrSearch(false)}
+                                        anchor={"bottom"}
+                                        style={{ zIndex: "9999" }}
+                                        sx={{ "& .MuiDrawer-paperAnchorBottom": { maxHeight: "100%" } }}
+                                    >
+                                        <KakaoAddrSearchForm selectedColor={openColorBar.selectedColor} handleSetKoreaAddr={handleSetKoreaAddr} />
+                                    </Drawer>
+                                </div>
+                                <div>
+                                    <div className="mb-1">{selectedAddr ? selectedAddr : '선택된 위치가 없습니다.'}</div>
+                                    <KakaoMap mapCenter={{ lat: mapCenter.koreaLat, lng: mapCenter.koreaLng }} />
+                                </div>
+                            </>
+                        }
+                        {!isKorea &&
+                            <>
+                                <div className="w-full flex justify-end items-center mt-2 mb-1 px-1">
+                                    <button className="border px-1 rounded mr-1 w-16 h-6" style={{ borderColor: openColorBar.selectedColor, color: openColorBar.selectedColor, fontSize: "12px" }} onClick={handleLocationDefault}>
+                                        <FontAwesomeIcon icon={faArrowRotateLeft as IconProp} style={{ color: openColorBar.selectedColor }} />
+                                        <span>초기화</span>
+                                    </button>
+                                    <button className="border px-1 rounded w-16 h-6" style={{ borderColor: openColorBar.selectedColor, color: openColorBar.selectedColor, fontSize: "12px" }} onClick={() => handleShowAddrSearch(true)}>
+                                        <FontAwesomeIcon icon={faMagnifyingGlass as IconProp} style={{ color: openColorBar.selectedColor }} />
+                                        <span>검색</span>
+                                    </button>
+                                    <Drawer
+                                        open={showAddrSearch}
+                                        onClose={() => handleShowAddrSearch(false)}
+                                        anchor={"bottom"}
+                                        style={{ zIndex: "9999" }}
+                                        sx={{ "& .MuiDrawer-paperAnchorBottom": { maxHeight: "100%" } }}
+                                    >
+                                        {/* <GoogleAddrSearchForm selectedColor={openColorBar.selectedColor} handleSetOverseaAddr={handleSetOverseaAddr} /> */}
+                                        <OverseaAddrSearchForm selectedColor={openColorBar.selectedColor} handleSetOverseaAddr={handleSetOverseaAddr} />
+                                    </Drawer>
+                                </div>
+                                <div>
+                                    <div className="mb-1">{selectedAddrOversea ? selectedAddrOversea : '선택된 위치가 없습니다.'}</div>
+                                    {/* <GoogleMaps mapCenter={{lat: mapCenter.overseasLat, lng: mapCenter.overseasLng}} /> */}
+                                    <OverseaMap mapCenter={{ lat: mapCenter.overseasLat, lng: mapCenter.overseasLng }} />
+                                </div>
+                            </>
+                        }
+                    </DialogContentsDiv>
+                    <DialogContentsDiv>
+                        <textarea placeholder="일정내용" className="outline-none w-full px-1 min-h-20" ref={(e) => { toDoValueRef.current['description'] = e }} name="description" defaultValue={dateData.description}></textarea>
                     </DialogContentsDiv>
                 </div>
             </DialogContent>
