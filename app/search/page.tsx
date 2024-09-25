@@ -17,7 +17,7 @@ export default function SearchPage() {
     const { setIsTodoButton } = useModalStore();
 
     const handleBackBtn = () => {
-        router.push('/');
+        router.push('calendar');
         setIsTodoButton(false);
     };
 
