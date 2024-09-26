@@ -1,7 +1,10 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
+import { useSession } from 'next-auth/react';
+import { useEffect } from 'react';
 
+import useUserStore from '../store/user';
 import useModalStore from '../store/modal';
 import useCalendarMenu from '../store/calendarMenu';
 import useDateStore from '../store/date';
@@ -33,17 +36,23 @@ import SpeedDialAction from '@mui/material/SpeedDialAction';
 
 const Calendar: React.FC = () => {
     const router = useRouter();
+    const { data: session, status } = useSession();
 
     const { bottomMenu, setBottomMenu } = useCalendarMenu();
-    const { setShowTodoDialog, setIsTodoButton, setShowAddArea } = useModalStore();
+    const { setShowTodoDialog, setIsTodoButton, setShowAddArea, setShowUserDialog } = useModalStore();
     const { setClickedDate, setTodayDate } = useDateStore();
-    
+    const { userInfo } = useUserStore();
+
     const handleSearchBtn = () => {
         router.push('search');
         setIsTodoButton(true);
         setShowAddArea(false);
         setIsTodoButton(false);
     };
+
+    const handleUserBtn = () => {
+        setShowUserDialog(true);
+    }
 
     const defaultStartDate: string = new Date().toISOString();
 
@@ -130,7 +139,8 @@ const Calendar: React.FC = () => {
                                 click: () => { handleSearchBtn() },
                             },
                             logout: {
-                                click: () => { }
+                                click: () => { handleUserBtn() },
+                                text: (session?.user?.name) ? session?.user?.name : ''
                             },
                         }}
                         headerToolbar={{

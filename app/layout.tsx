@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { IBM_Plex_Sans_KR } from "next/font/google"
 import Script from 'next/script';
+import SessionProviderWrapper from "./components/nextAuth/SessionProviderWrapper";
 
 const ibmPlexSansKr = IBM_Plex_Sans_KR({
   subsets: ['latin'],
@@ -36,7 +37,7 @@ export default function RootLayout({
           crossOrigin="anonymous"
           strategy="afterInteractive"
         />
-        {children}
+        <SessionProviderWrapper>{children}</SessionProviderWrapper>
       </body>
     </html>
   );
