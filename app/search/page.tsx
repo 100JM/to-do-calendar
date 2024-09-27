@@ -4,6 +4,7 @@ import { useRef } from "react";
 import { useRouter } from 'next/navigation';
 
 import useModalStore from "../store/modal";
+import useCalendarMenu from "../store/calendarMenu";
 
 import { AnimatePresence, motion } from 'framer-motion';
 import SearchIcon from '@mui/icons-material/Search';
@@ -15,10 +16,12 @@ export default function SearchPage() {
     const searchInputRef = useRef<HTMLInputElement | null>(null);
 
     const { setIsTodoButton } = useModalStore();
+    const { setIsFadeIn } = useCalendarMenu();
 
     const handleBackBtn = () => {
         router.push('calendar');
         setIsTodoButton(false);
+        setIsFadeIn(false);
     };
 
     const subVariants = {

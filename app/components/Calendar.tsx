@@ -2,7 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
-import { useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 import useUserStore from '../store/user';
 import useModalStore from '../store/modal';
@@ -15,12 +15,14 @@ import FullCalendar from '@fullcalendar/react';
 import interactionPlugin from "@fullcalendar/interaction";
 import { DateClickArg } from '@fullcalendar/interaction';
 import dayGridPlugin from '@fullcalendar/daygrid';
-import { EventApi } from '@fullcalendar/core/index.js';
+import { DatesSetArg, EventApi } from '@fullcalendar/core/index.js';
 import koLocale from '@fullcalendar/core/locales/ko';
 import { AnimatePresence, motion } from 'framer-motion';
 
+import sanitizeHtml from 'sanitize-html';
 import dayjs from 'dayjs';
 import 'bootstrap-icons/font/bootstrap-icons.css';
+import BasicProfile from '../public/images/basic_profile.png';
 
 import Box from '@mui/material/Box';
 import BottomNavigation from '@mui/material/BottomNavigation';
@@ -38,10 +40,12 @@ const Calendar: React.FC = () => {
     const router = useRouter();
     const { data: session, status } = useSession();
 
-    const { bottomMenu, setBottomMenu } = useCalendarMenu();
+    const { bottomMenu, setBottomMenu, isFadeIn, setIsFadeIn } = useCalendarMenu();
     const { setShowTodoDialog, setIsTodoButton, setShowAddArea, setShowUserDialog } = useModalStore();
     const { setClickedDate, setTodayDate } = useDateStore();
-    const { userInfo } = useUserStore();
+    const { userInfo, setUserInfo } = useUserStore();
+
+    const logOutBtnRef = useRef<HTMLButtonElement | null>(null);
 
     const handleSearchBtn = () => {
         router.push('search');
@@ -112,15 +116,65 @@ const Calendar: React.FC = () => {
         duration: 0.5
     };
 
+    const fadeVariants = {
+        hidden: { opacity: 0 },
+        visible: { opacity: 1 },
+        exit: { opacity: 0 }
+    };
+
+    const fadeTransitionSettings = {
+        duration: 1,
+        ease: "easeInOut"
+    };
+
+    const updateUserBtn = () => {
+        logOutBtnRef.current = document.querySelector('.fc-logout-button');
+        
+        const userImg = (session?.user?.image) ? session.user.image : BasicProfile.src;
+        const userName = (session?.user?.name) ? session.user?.name : '';
+
+        if (logOutBtnRef.current && bottomMenu === 'calendar') {
+            const unsafeHtml = `
+                <div class="no-user-img">
+                    <img class="default-person-img" src=${userImg} /><span>${userName} 님</span>
+                </div>
+            `;
+
+            const cleanHtml = sanitizeHtml(unsafeHtml, {
+                allowedTags: ['div', 'img', 'span'],
+                allowedAttributes: {
+                    '*': ['class', 'src', 'alt'],
+                },
+            });
+
+            ((logOutBtnRef.current) as HTMLButtonElement).innerHTML = cleanHtml;
+        }
+    };
+    
+    useEffect(() => {
+
+        const timer = setTimeout(() => {
+            updateUserBtn();
+        }, 0); // Fullcalendar의 커스텀버튼 렌더링 시점이 맞는 않는것으로 의심되어 bottomMenu가 변경되었을 시 제대로 반영되지 않아 setTimeout을 걸었음
+
+        return () => {
+            clearTimeout(timer);
+            if (logOutBtnRef.current) {
+                logOutBtnRef.current = null;
+            }
+        };
+
+    }, [session, bottomMenu]);
+
     return (
         <AnimatePresence>
             <motion.div
                 key="calendar"
-                variants={slideVariants}
+                variants={isFadeIn ? fadeVariants : slideVariants}
                 initial="hidden"
                 animate="visible"
                 exit="exit"
-                transition={transitionSettings}
+                transition={isFadeIn ? fadeTransitionSettings : transitionSettings}
                 style={{
                     width: "100%",
                     height: "100%"
@@ -131,7 +185,6 @@ const Calendar: React.FC = () => {
                         plugins={[dayGridPlugin, interactionPlugin]}
                         initialView="dayGridMonth"
                         editable={false}
-                        // height={calendarHeight}
                         locale={koLocale}
                         customButtons={{
                             searchButton: {
@@ -139,8 +192,7 @@ const Calendar: React.FC = () => {
                                 click: () => { handleSearchBtn() },
                             },
                             logout: {
-                                click: () => { handleUserBtn() },
-                                text: (session?.user?.name) ? session?.user?.name : ''
+                                click: () => { handleUserBtn() }
                             },
                         }}
                         headerToolbar={{

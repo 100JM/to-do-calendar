@@ -32,6 +32,7 @@ i {
   background-color: #FEE500 !important;
   border-color: #FEE500 !important;
   color: #191919 !important;
+  min-width: 55px;
 }
 
 .fc-day:hover {

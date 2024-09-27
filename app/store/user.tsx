@@ -2,13 +2,25 @@ import { userInfo } from "os";
 import { create } from "zustand"
 
 interface UserStore {
-    userInfo: any;
-    setUserInfo: (info: any) => void;
+    userInfo: {
+        image: string;
+        name: string;
+    };
+    setUserInfo: (image: string, name: string) => void;
 }
 
 const useUserStore = create<UserStore>((set) => ({
-    userInfo: null,
-    setUserInfo: (info: any) => set({ userInfo: info }),
+    userInfo: {
+        image: '',
+        name: '',
+    },
+    setUserInfo: (image, name) =>
+        set(() => ({
+            userInfo: {
+                image: image,
+                name: name
+            }
+        })),
 }));
 
 export default useUserStore;
