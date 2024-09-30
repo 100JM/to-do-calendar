@@ -391,6 +391,11 @@ const AddArea: React.FC = () => {
                                             "& fieldset": { borderColor: openColorBar.selectedColor }
                                         }}
                                         inputRef={(e: any) => toDoValueRef.current['start'] = e}
+                                        localeText={{
+                                            toolbarTitle: '날짜 선택',
+                                            cancelButtonLabel: '취소',
+                                            okButtonLabel: '확인'
+                                        }}
                                     />
                                     {!isAllday && <TimePicker
                                         ref={timeRef}
@@ -408,6 +413,11 @@ const AddArea: React.FC = () => {
                                                 "& input": { height: "8px", fontSize: "11px", textAlign: "center", padding: "14px 0 14px 14px" }
                                             },
                                             "& fieldset": { borderColor: openColorBar.selectedColor }
+                                        }}
+                                        localeText={{
+                                            toolbarTitle: '시간 선택',
+                                            cancelButtonLabel: '취소',
+                                            okButtonLabel: '확인'
                                         }}
                                     />}
                                 </LocalizationProvider>
@@ -435,6 +445,11 @@ const AddArea: React.FC = () => {
                                             "& fieldset": { borderColor: openColorBar.selectedColor }
                                         }}
                                         inputRef={(e: any) => toDoValueRef.current['end'] = e}
+                                        localeText={{
+                                            toolbarTitle: '날짜 선택',
+                                            cancelButtonLabel: '취소',
+                                            okButtonLabel: '확인'
+                                        }}
                                     />
                                     {!isAllday && <TimePicker
                                         className={
@@ -451,6 +466,11 @@ const AddArea: React.FC = () => {
                                                 "& input": { height: "8px", fontSize: "11px", textAlign: "center", padding: "14px 0 14px 14px" }
                                             },
                                             "& fieldset": { borderColor: openColorBar.selectedColor }
+                                        }}
+                                        localeText={{
+                                            toolbarTitle: '시간 선택',
+                                            cancelButtonLabel: '취소',
+                                            okButtonLabel: '확인'
                                         }}
                                     />}
                                 </LocalizationProvider>

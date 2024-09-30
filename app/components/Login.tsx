@@ -54,7 +54,7 @@ const Login: React.FC = () => {
                                 className="w-2/3 flex justify-center items-center"
                                 onClick={() => signIn('kakao', { callbackUrl: '/calendar' })}
                             >
-                                <Image src={kakaoLoginImg} alt='kakao_login' />
+                                <Image src={kakaoLoginImg} alt='kakao_login' priority/>
                             </button>
                         </div>
                     </motion.div>

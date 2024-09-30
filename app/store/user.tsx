@@ -15,8 +15,9 @@ const useUserStore = create<UserStore>((set) => ({
         name: '',
     },
     setUserInfo: (image, name) =>
-        set(() => ({
+        set((state) => ({
             userInfo: {
+                ...state.userInfo,
                 image: image,
                 name: name
             }

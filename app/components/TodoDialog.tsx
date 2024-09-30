@@ -1,18 +1,12 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { unstable_batchedUpdates } from 'react-dom';
 
 import useModalStore from '../store/modal';
 import useDateStore from '../store/date';
 import DialogContentsDiv from './dialog/DialogContentsDiv';
 import AddArea from './dialog/AddArea';
-
-import IconButton from '@mui/material/IconButton';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import CloseIcon from '@mui/icons-material/Close';
-import Switch from '@mui/material/Switch';
-import Drawer from '@mui/material/Drawer';
+import TodoList from './dialog/TodoList';
 
 import dayjs, { Dayjs } from 'dayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
@@ -28,11 +22,9 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { IconProp } from '@fortawesome/fontawesome-svg-core'
 import { faClockRotateLeft, faThumbTack, faCircleXmark, faCirclePlus, faTrash, faCircleCheck, faPenToSquare, faMapLocationDot, faMagnifyingGlass, faArrowRotateLeft } from '@fortawesome/free-solid-svg-icons';
 
-const koLocale: string = dayjs.locale('ko');
-
 const TodoDialog: React.FC = () => {
     const { showTodoDialog, setShowTodoDialog, showAddArea, setShowAddArea, isTodoButton, setIsTodoButton } = useModalStore();
-    const { selectedDate } = useDateStore();
+    const { selectedDate, selectedDateEventList } = useDateStore();
 
     const handleCloseModal = () => {
         setShowTodoDialog(false);
@@ -65,9 +57,12 @@ const TodoDialog: React.FC = () => {
                             <DialogContent>
                                 <div className="text-gray-700 mb-4">
                                     <DialogContentsDiv>
-                                        <div className="flex items-center justify-center min-h-80">
-                                            <span className="text-slate-500">등록된 일정이 없습니다.</span>
-                                        </div>
+                                        {selectedDateEventList.length === 0 &&
+                                            <div className="flex items-center justify-center min-h-80">
+                                                <span className="text-slate-500">등록된 일정이 없습니다.</span>
+                                            </div>
+                                        }
+                                        {selectedDateEventList.length > 0 && <TodoList />}
                                     </DialogContentsDiv>
                                 </div>
                             </DialogContent>

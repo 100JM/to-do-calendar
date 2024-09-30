@@ -32,7 +32,7 @@ i {
   background-color: #FEE500 !important;
   border-color: #FEE500 !important;
   color: #191919 !important;
-  min-width: 55px;
+  min-width: 65px;
 }
 
 .fc-day:hover {
@@ -96,7 +96,15 @@ i {
 @media (max-width : 490px) {
   .fc-header-toolbar {
     font-size: 9px;
-  }  
+  }
+
+  /* .user-todo-cnt {
+    display: grid;
+  }
+
+  .user-todo-cnt>div {
+    width: 100%;
+  } */
 }
 
 .custom-input {

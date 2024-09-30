@@ -4,7 +4,6 @@ import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import { useState, useEffect, useRef } from 'react';
 
-import useUserStore from '../store/user';
 import useModalStore from '../store/modal';
 import useCalendarMenu from '../store/calendarMenu';
 import useDateStore from '../store/date';
@@ -35,6 +34,7 @@ import FormatListBulletedIcon from '@mui/icons-material/FormatListBulleted';
 import SpeedDial from '@mui/material/SpeedDial';
 import SpeedDialIcon from '@mui/material/SpeedDialIcon';
 import SpeedDialAction from '@mui/material/SpeedDialAction';
+import Skeleton from '@mui/material/Skeleton';
 
 const Calendar: React.FC = () => {
     const router = useRouter();
@@ -42,8 +42,9 @@ const Calendar: React.FC = () => {
 
     const { bottomMenu, setBottomMenu, isFadeIn, setIsFadeIn } = useCalendarMenu();
     const { setShowTodoDialog, setIsTodoButton, setShowAddArea, setShowUserDialog } = useModalStore();
-    const { setClickedDate, setTodayDate } = useDateStore();
-    const { userInfo, setUserInfo } = useUserStore();
+    const { setClickedDate, setTodayDate, todoList, setSelectedDateEventList } = useDateStore();
+
+    const [myTodoList, setMyTodoList] = useState<Array<any>>([]);
 
     const logOutBtnRef = useRef<HTMLButtonElement | null>(null);
 
@@ -75,9 +76,21 @@ const Calendar: React.FC = () => {
             };
         });
 
+        const selectedDateEvt = todoEventList.filter((evt) => {
+            if (!evt.allDay) {
+                return dayjs(evt.startStr.split('T')[0]).format('YYYY-MM-DD') <= arg.dateStr
+                    &&
+                    arg.dateStr <= dayjs(evt.endStr.split('T')[0]).format('YYYY-MM-DD');
+            } else {
+                return dayjs(evt.startStr.split('T')[0]).format('YYYY-MM-DD') <= arg.dateStr
+                    &&
+                    arg.dateStr < dayjs(evt.endStr.split('T')[0]).format('YYYY-MM-DD');
+            }
+        });
+
         setClickedDate(arg.dateStr);
         setShowTodoDialog(true);
-        console.log(todoEventList);
+        setSelectedDateEventList(selectedDateEvt);
     };
 
     const desktopMenuEvt = (value: string) => {
@@ -129,14 +142,14 @@ const Calendar: React.FC = () => {
 
     const updateUserBtn = () => {
         logOutBtnRef.current = document.querySelector('.fc-logout-button');
-        
+
         const userImg = (session?.user?.image) ? session.user.image : BasicProfile.src;
-        const userName = (session?.user?.name) ? session.user?.name : '';
+        const userName = (session?.user?.name) ? `${session.user?.name} 님` : '';
 
         if (logOutBtnRef.current && bottomMenu === 'calendar') {
             const unsafeHtml = `
                 <div class="no-user-img">
-                    <img class="default-person-img" src=${userImg} /><span>${userName} 님</span>
+                    <img class="default-person-img" src=${userImg} /><span>${userName}</span>
                 </div>
             `;
 
@@ -150,8 +163,11 @@ const Calendar: React.FC = () => {
             ((logOutBtnRef.current) as HTMLButtonElement).innerHTML = cleanHtml;
         }
     };
-    
+
     useEffect(() => {
+        if (status === 'unauthenticated') {
+            router.replace('/');
+        }
 
         const timer = setTimeout(() => {
             updateUserBtn();
@@ -166,141 +182,159 @@ const Calendar: React.FC = () => {
 
     }, [session, bottomMenu]);
 
-    return (
-        <AnimatePresence>
-            <motion.div
-                key="calendar"
-                variants={isFadeIn ? fadeVariants : slideVariants}
-                initial="hidden"
-                animate="visible"
-                exit="exit"
-                transition={isFadeIn ? fadeTransitionSettings : transitionSettings}
-                style={{
-                    width: "100%",
-                    height: "100%"
-                }}
-            >
-                {bottomMenu === 'calendar' &&
-                    <FullCalendar
-                        plugins={[dayGridPlugin, interactionPlugin]}
-                        initialView="dayGridMonth"
-                        editable={false}
-                        locale={koLocale}
-                        customButtons={{
-                            searchButton: {
-                                icon: 'bi bi-search',
-                                click: () => { handleSearchBtn() },
-                            },
-                            logout: {
-                                click: () => { handleUserBtn() }
-                            },
-                        }}
-                        headerToolbar={{
-                            left: 'prev,next today logout',
-                            center: 'title',
-                            right: 'searchButton',
-                        }}
-                        dateClick={dateClickEvt}
-                        // events={ }
-                        displayEventTime={false}
-                        timeZone='UTC'
-                    />
-                }
-                {bottomMenu === 'importantTodo' &&
-                    <ImportantTodoList />
-                }
-                {bottomMenu === 'all' &&
-                    <TodoListAll />
-                }
-                <SpeedDial
-                    ariaLabel="Desktop SpeedDial"
-                    icon={<SpeedDialIcon />}
-                    sx={{
-                        display: "none",
-                        "@media (min-width:720px)": {
-                            display: "flex",
-                            position: "absolute",
-                            bottom: "30px",
-                            right: "30px",
-                        }
-                    }}
-                    direction="up"
-                >
-                    <SpeedDialAction key="calendar" icon={<CalendarMonthIcon />} tooltipTitle="캘린더" onClick={() => desktopMenuEvt('calendar')} />
-                    <SpeedDialAction key="todo" icon={<AddCircleOutlineIcon />} tooltipTitle="일정 추가" onClick={() => todoButtonEvt()} />
-                    <SpeedDialAction key="all" icon={<FormatListBulletedIcon />} tooltipTitle="일정 목록" onClick={() => desktopMenuEvt('all')} />
-                    <SpeedDialAction
-                        key="importantTodo"
-                        icon={
-                            <Badge
-                                // badgeContent={
-                                //     importantMyTodoList.filter((i) => {
-                                //         const importantEndDate: string = i.allDay ? dayjs(i.end).add(-1, 'day').format('YYYY-MM-DD') : i.end.split('T')[0];
-                                //         const importantEndDday: number = dayjs(importantEndDate).startOf('day').diff(dayjs().startOf('day'), 'day');
+    useEffect(() => {
+        if (todoList.length > 0) {
+            const mine = todoList.filter((todo) => {
+                return todo.user === session?.userId;
+            });
 
-                                //         return (
-                                //             importantEndDday >= 0 && importantEndDday <= 3
-                                //         )
-                                //     }).length
-                                // }
-                                color="error">
-                                <PushPinIcon />
-                            </Badge>
-                        }
-                        tooltipTitle="중요 일정"
-                        onClick={() => desktopMenuEvt('importantTodo')}
-                    />
-                </SpeedDial>
-                <Box sx={{
-                    width: "100%",
-                    height: "8%",
-                    display: "block",
-                    "& .MuiBottomNavigationAction-root": { color: "#2c3e50" },
-                    "@media (min-width:720px)": {
-                        display: "none"
-                    }
-                }}>
-                    <BottomNavigation
-                        showLabels
-                        // value={bottomMenu}
-                        onChange={handleBottomMenuChange}
-                        sx={{
+            setMyTodoList(mine);
+        }
+
+    }, [session?.userId, todoList])
+
+    return (
+        <>
+            {status === 'unauthenticated' ?
+                null
+                :
+                <AnimatePresence>
+                    <motion.div
+                        key="calendar"
+                        variants={isFadeIn ? fadeVariants : slideVariants}
+                        initial="hidden"
+                        animate="visible"
+                        exit="exit"
+                        transition={isFadeIn ? fadeTransitionSettings : transitionSettings}
+                        style={{
                             width: "100%",
-                            height: "100%",
-                            paddingTop: "12px",
-                            display: "flex",
-                            justifyContent: "space-between",
-                            alignContent: "center"
+                            height: "100%"
                         }}
                     >
-                        <BottomNavigationAction label="캘린더" value="calendar" icon={<CalendarMonthIcon />} />
-                        <BottomNavigationAction label="일정 추가" value="todo" icon={<AddCircleOutlineIcon />} sx={{ color: "#DC143C !important" }} />
-                        <BottomNavigationAction label="일정 목록" value="all" icon={<FormatListBulletedIcon />} />
-                        <BottomNavigationAction
-                            label="중요 일정"
-                            value="importantTodo"
-                            icon={
-                                <Badge
-                                    // badgeContent={
-                                    //     importantMyTodoList.filter((i) => {
-                                    //         const importantEndDate: string = i.allDay ? dayjs(i.end).add(-1, 'day').format('YYYY-MM-DD') : i.end.split('T')[0];
-                                    //         const importantEndDday: number = dayjs(importantEndDate).startOf('day').diff(dayjs().startOf('day'), 'day');
+                        {bottomMenu === 'calendar' &&
+                            <FullCalendar
+                                plugins={[dayGridPlugin, interactionPlugin]}
+                                initialView="dayGridMonth"
+                                editable={false}
+                                locale={koLocale}
+                                customButtons={{
+                                    searchButton: {
+                                        icon: 'bi bi-search',
+                                        click: () => { handleSearchBtn() },
+                                    },
+                                    logout: {
+                                        click: () => { handleUserBtn() }
+                                    },
+                                }}
+                                headerToolbar={{
+                                    left: 'prev,next today logout',
+                                    center: 'title',
+                                    right: 'searchButton',
+                                }}
+                                dateClick={dateClickEvt}
+                                events={myTodoList}
+                                displayEventTime={false}
+                                timeZone='UTC'
+                            />
+                        }
+                        {bottomMenu === 'importantTodo' &&
+                            <ImportantTodoList />
+                        }
+                        {bottomMenu === 'all' &&
+                            <TodoListAll />
+                        }
+                        <SpeedDial
+                            ariaLabel="Desktop SpeedDial"
+                            icon={<SpeedDialIcon />}
+                            sx={{
+                                display: "none",
+                                "@media (min-width:720px)": {
+                                    display: "flex",
+                                    position: "absolute",
+                                    bottom: "30px",
+                                    right: "30px",
+                                }
+                            }}
+                            direction="up"
+                        >
+                            <SpeedDialAction key="calendar" icon={<CalendarMonthIcon />} tooltipTitle="캘린더" onClick={() => desktopMenuEvt('calendar')} />
+                            <SpeedDialAction key="todo" icon={<AddCircleOutlineIcon />} tooltipTitle="일정 추가" onClick={() => todoButtonEvt()} />
+                            <SpeedDialAction key="all" icon={<FormatListBulletedIcon />} tooltipTitle="일정 목록" onClick={() => desktopMenuEvt('all')} />
+                            <SpeedDialAction
+                                key="importantTodo"
+                                icon={
+                                    <Badge
+                                        // badgeContent={
+                                        //     importantMyTodoList.filter((i) => {
+                                        //         const importantEndDate: string = i.allDay ? dayjs(i.end).add(-1, 'day').format('YYYY-MM-DD') : i.end.split('T')[0];
+                                        //         const importantEndDday: number = dayjs(importantEndDate).startOf('day').diff(dayjs().startOf('day'), 'day');
 
-                                    //         return (
-                                    //             importantEndDday >= 0 && importantEndDday <= 3
-                                    //         )
-                                    //     }).length
-                                    // }
-                                    color="error">
-                                    <PushPinIcon />
-                                </Badge>
+                                        //         return (
+                                        //             importantEndDday >= 0 && importantEndDday <= 3
+                                        //         )
+                                        //     }).length
+                                        // }
+                                        color="error">
+                                        <PushPinIcon />
+                                    </Badge>
+                                }
+                                tooltipTitle="중요 일정"
+                                onClick={() => desktopMenuEvt('importantTodo')}
+                            />
+                        </SpeedDial>
+                        <Box sx={{
+                            width: "100%",
+                            height: "8%",
+                            display: "block",
+                            "& .MuiBottomNavigationAction-root": { color: "#2c3e50" },
+                            "@media (min-width:720px)": {
+                                display: "none"
                             }
-                        // onClick={() => dispatch(dateAction.getImportantTodoList())}
-                        />
-                    </BottomNavigation>
-                </Box>
-            </motion.div>
-        </AnimatePresence>
+                        }}>
+                            <BottomNavigation
+                                showLabels
+                                // value={bottomMenu}
+                                onChange={handleBottomMenuChange}
+                                sx={{
+                                    width: "100%",
+                                    height: "100%",
+                                    paddingTop: "12px",
+                                    display: "flex",
+                                    justifyContent: "space-between",
+                                    alignContent: "center"
+                                }}
+                            >
+                                <BottomNavigationAction label="캘린더" value="calendar" icon={<CalendarMonthIcon />} />
+                                <BottomNavigationAction label="일정 추가" value="todo" icon={<AddCircleOutlineIcon />} sx={{ color: "#DC143C !important" }} />
+                                <BottomNavigationAction label="일정 목록" value="all" icon={<FormatListBulletedIcon />} />
+                                <BottomNavigationAction
+                                    label="중요 일정"
+                                    value="importantTodo"
+                                    icon={
+                                        <Badge
+                                            // badgeContent={
+                                            //     importantMyTodoList.filter((i) => {
+                                            //         const importantEndDate: string = i.allDay ? dayjs(i.end).add(-1, 'day').format('YYYY-MM-DD') : i.end.split('T')[0];
+                                            //         const importantEndDday: number = dayjs(importantEndDate).startOf('day').diff(dayjs().startOf('day'), 'day');
+
+                                            //         return (
+                                            //             importantEndDday >= 0 && importantEndDday <= 3
+                                            //         )
+                                            //     }).length
+                                            // }
+                                            color="error">
+                                            <PushPinIcon />
+                                        </Badge>
+                                    }
+                                // onClick={() => dispatch(dateAction.getImportantTodoList())}
+                                />
+                            </BottomNavigation>
+                        </Box>
+                    </motion.div>
+                </AnimatePresence>
+            }
+
+        </>
     );
 };
 
