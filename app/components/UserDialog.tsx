@@ -1,12 +1,13 @@
 'use client';
 
-import { signOut } from 'next-auth/react';
 import { useSession } from 'next-auth/react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import useModalStore from '../store/modal';
+import useDateStore from '../store/date';
 
 import ComfirmDialog from './dialog/ComfrimDialog';
+import dayjs from 'dayjs';
 
 import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
@@ -26,14 +27,30 @@ interface ComfirmTextInterface {
     body: string;
 }
 
+interface myTodoListCntInterface {
+    all: number;
+    ongoing: number;
+    ended: number;
+    important: number;
+}
+
+const defaultDate: string = new Date().toISOString();
+
 const UserDialog: React.FC = () => {
-    const { showUserDialog, setShowUserDialog } = useModalStore();
     const { data: session, status } = useSession();
+    const { showUserDialog, setShowUserDialog } = useModalStore();
+    const { todoList } = useDateStore();
 
     const [showComfirm, setShowComfirm] = useState<boolean>(false);
     const [comfirmText, setComfirmText] = useState<ComfirmTextInterface>({
         title: '',
         body: '',
+    });
+    const [myTodoListCnt, setMyTodoListCnt] = useState<myTodoListCntInterface>({
+        all: 0,
+        ongoing: 0,
+        ended: 0,
+        important: 0,
     });
 
     const comfirmComment:any = {
@@ -64,6 +81,29 @@ const UserDialog: React.FC = () => {
             }
         });
     };
+
+    useEffect(() => {
+        const all = todoList.filter((t) => t.user === session?.userId);
+        const ongoing = all.filter((o) => {
+            const todoEnday = o.allDay ? dayjs(o.end).add(-1, 'day').format('YYYY-MM-DD') : o.end.split('T')[0];
+            return todoEnday >= dayjs(defaultDate).format('YYYY-MM-DD');
+        }).length;
+        const ended = all.filter((e) => {
+            const todoEnday = e.allDay ? dayjs(e.end).add(-1, 'day').format('YYYY-MM-DD') : e.end.split('T')[0];
+            return todoEnday < dayjs(defaultDate).format('YYYY-MM-DD');
+        }).length;
+        const important = all.filter((i) => i.important).length;
+
+        setMyTodoListCnt((prev) => {
+            return {
+                ...prev,
+                all: all.length,
+                ongoing: ongoing,
+                ended: ended,
+                important: important
+            }
+        });
+    }, [session, todoList])
 
     return (
         <>
@@ -105,11 +145,11 @@ const UserDialog: React.FC = () => {
                         </DialogTitle>
                         <DialogContent style={{ padding: "20px 24px" }}>
                             <div className="w-full grid">
-                                <div>등록된 일정: 20</div>
+                                <div>등록된 일정: {myTodoListCnt.all}</div>
                                 <div className="w-full grid pb-6">
-                                    <div className="w-full">진행 일정: <span style={{ color: '#3788d8' }}>14</span></div>
-                                    <div className="w-full">종료 일정: <span style={{ color: '#708090' }}>6</span></div>
-                                    <div className="w-full">중요 일정: <span style={{ color: '#DC143C' }}>6</span></div>
+                                    <div className="w-full">진행 일정: <span style={{ color: '#3788d8' }}>{myTodoListCnt.ongoing}</span></div>
+                                    <div className="w-full">종료 일정: <span style={{ color: '#708090' }}>{myTodoListCnt.ended}</span></div>
+                                    <div className="w-full">중요 일정: <span style={{ color: '#DC143C' }}>{myTodoListCnt.important}</span></div>
                                 </div>
                                 <div className="flex items-center justify-between text-slate-500">
                                     <button className="flex items-center text-xs text-red-500 hover:text-red-300" onClick={() => handleComfirm(comfirmComment.disconnectTitle, comfirmComment.disconnectBody)}>
