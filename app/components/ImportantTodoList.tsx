@@ -1,7 +1,37 @@
+import { useSession } from 'next-auth/react';
+import { useState, useEffect } from 'react';
+import useDateStore from '../store/date';
+import useModalStore from "../store/modal";
 import dayjs from 'dayjs';
 
 const ImportantTodoList: React.FC = () => {
-    const importantMyTodoList: Array<any> = [];
+    const { data: session, status } = useSession();
+    const { todoList, setSelectedDateEventInfo } = useDateStore();
+    const { setShowAddArea, setIsTodoButton, setShowTodoDialog } = useModalStore();
+
+    const [ importantMyTodoList, setImportantMyTodoList ] = useState<Array<any>>([]);
+
+    const handleClickImportantTodo = (id: string) => {
+        setSelectedDateEventInfo(id);
+        setShowAddArea(true);
+        setIsTodoButton(true)
+        setShowTodoDialog(true);
+    };
+
+    useEffect(() => {
+        const myList = todoList.filter((t) => {
+            return t.user === session?.userId;
+        }).filter((todo) => {
+            return todo.important === true;
+        }).sort((a,b) => {
+            const dateA = new Date(a.end.split('T')[0]);
+            const dateB = new Date(b.end.split('T')[0]);
+
+            return dateA.getTime() - dateB.getTime();
+        });
+
+        setImportantMyTodoList(myList);
+    }, [todoList, session]);
 
     return (
         <>
@@ -14,7 +44,7 @@ const ImportantTodoList: React.FC = () => {
                             const importantEndDday: number = dayjs(importantEndDate).startOf('day').diff(dayjs().startOf('day'), 'day');
 
                             return (
-                                <div key={i.id} className="p-2 border border-gray-300 rounded-xl shadow mb-3 flex cursor-pointer hover:bg-gray-100">
+                                <div key={i.id} className="p-2 border border-gray-300 rounded-xl shadow mb-3 flex cursor-pointer hover:bg-gray-100" onClick={() => handleClickImportantTodo(i.id)}>
                                     <div className="w-4 rounded-md mr-2" style={{ backgroundColor: `${i.color}` }}></div>
                                     <div style={{ width: "calc(100% - 1.5rem)" }}>
                                         <div className="overflow-hidden text-ellipsis whitespace-nowrap">{i.title}</div>

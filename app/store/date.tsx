@@ -1,26 +1,10 @@
 import { create } from "zustand";
 
 interface DateStore {
-    selectedDateEventInfo: {
-        id: string;
-        title: string;
-        allDay: boolean;
-        start: string;
-        end: string;
-        color: string;
-        colorName: string;
-        description: string;
-        important: boolean;
-        display: string;
-        koreaLat: number;
-        koreaLng: number;
-        overseasLat: number;
-        overseasLng: number;
-        locationName: string;
-        overseaLocationName: string;
-        isKorea: boolean;
-        user: any;
-    };
+    clickedDate: string;
+    setClickedDate: (date: string) => void;
+    setSelectedDateEventInfo: (id: string) => void;
+    setSelectedDateEventInfoDefault: () => void;
     selectedDate: {
         id: string;
         title: string;
@@ -41,7 +25,6 @@ interface DateStore {
         isKorea: boolean;
         user: any;
     };
-    setClickedDate: (date: string) => void;
     setTodayDate: () => void;
     todoList: Array<any>;
     selectedDateEventList: Array<any>;
@@ -52,26 +35,58 @@ interface DateStore {
 const defaultStartDate: string = new Date().toISOString();
 
 const useDateStore = create<DateStore>((set) => ({
-    selectedDateEventInfo: {
-        id: '',
-        title: '',
-        allDay: true,
-        start: defaultStartDate,
-        end: defaultStartDate,
-        color: '#3788d8',
-        colorName: '워터블루',
-        description: '',
-        important: false,
-        display: 'block',
-        koreaLat: 37.5665,
-        koreaLng: 126.9780,
-        overseasLat: 37.5665,
-        overseasLng: 126.9780,
-        locationName: '',
-        overseaLocationName: '',
-        isKorea: true,
-        user: 0,
-    },
+    clickedDate: '',
+    setClickedDate: (date: string) =>
+        set(() => ({
+            clickedDate: date,
+            selectedDate: {
+                id: '',
+                title: '',
+                allDay: true,
+                start: date,
+                end: date,
+                color: '#3788d8',
+                colorName: '워터블루',
+                description: '',
+                important: false,
+                display: 'block',
+                koreaLat: 37.5665,
+                koreaLng: 126.9780,
+                overseasLat: 37.5665,
+                overseasLng: 126.9780,
+                locationName: '',
+                overseaLocationName: '',
+                isKorea: true,
+                user: 0,
+            },
+        })),
+    setSelectedDateEventInfo: (id: string) => set((state) => ({
+        selectedDate: state.todoList.find((t) => {
+            return t.id === id;
+        })
+    })),
+    setSelectedDateEventInfoDefault: () => set((state) => ({
+        selectedDate: {
+            id: '',
+            title: '',
+            allDay: true,
+            start: state.clickedDate,
+            end: state.clickedDate,
+            color: '#3788d8',
+            colorName: '워터블루',
+            description: '',
+            important: false,
+            display: 'block',
+            koreaLat: 37.5665,
+            koreaLng: 126.9780,
+            overseasLat: 37.5665,
+            overseasLng: 126.9780,
+            locationName: '',
+            overseaLocationName: '',
+            isKorea: true,
+            user: 0,
+        }
+    })),
     selectedDate: {
         id: '',
         title: '',
@@ -92,14 +107,6 @@ const useDateStore = create<DateStore>((set) => ({
         isKorea: true,
         user: 0,
     },
-    setClickedDate: (date: string) =>
-        set((state) => ({
-            selectedDate: {
-                ...state.selectedDate,
-                start: date,
-                end: date
-            },
-        })),
     setTodayDate: () =>
         set((state) => ({
             selectedDate: {
@@ -112,8 +119,8 @@ const useDateStore = create<DateStore>((set) => ({
         {
             id: '1',
             title: 'Aevent',
-            start: '2024-08-17T09:00',
-            end: '2024-08-21T18:00',
+            start: '2024-10-01T09:00',
+            end: '2024-10-04T18:00',
             color: '#3788d8',
             colorName: '워터블루',
             allDay: false,
@@ -131,8 +138,8 @@ const useDateStore = create<DateStore>((set) => ({
         {
             id: '2fds',
             title: 'Cevent',
-            start: '2024-07-15T09:00',
-            end: '2024-07-19T10:00',
+            start: '2024-08-15T09:00',
+            end: '2024-08-19T10:00',
             color: '#3788d8',
             colorName: '워터블루',
             allDay: false,

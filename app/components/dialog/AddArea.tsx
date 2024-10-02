@@ -26,14 +26,13 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { TimePicker } from '@mui/x-date-pickers/TimePicker';
-import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
 import 'dayjs/locale/ko';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { IconProp } from '@fortawesome/fontawesome-svg-core'
-import { faClockRotateLeft, faThumbTack, faCircleXmark, faCirclePlus, faTrash, faCircleCheck, faPenToSquare, faMapLocationDot, faMagnifyingGlass, faArrowRotateLeft } from '@fortawesome/free-solid-svg-icons';
+import { faClockRotateLeft, faThumbTack, faTrash, faCircleCheck, faPenToSquare, faMapLocationDot, faMagnifyingGlass, faArrowRotateLeft } from '@fortawesome/free-solid-svg-icons';
 
 const koLocale: string = dayjs.locale('ko');
 
@@ -78,7 +77,7 @@ interface ToDoValueRefs {
 const AddArea: React.FC = () => {
     const { bottomMenu } = useCalendarMenu();
     const { isTodoButton, setShowAddArea, setShowTodoDialog, setIsTodoButton } = useModalStore();
-    const { selectedDateEventInfo, selectedDate } = useDateStore();
+    const { selectedDate, setSelectedDateEventInfoDefault } = useDateStore();
     const { showToast } = useToastStore();
 
     const defaultStartDateTime = dayjs().set('hour', 9).set('minute', 0).startOf('minute').format('HH:mm');
@@ -111,31 +110,11 @@ const AddArea: React.FC = () => {
     const timeRef = useRef<HTMLDivElement | null>(null);
     const toDoValueRef = useRef<ToDoValueRefs>({});
 
-    let dateData: DateData = {
-        id: (selectedDateEventInfo.id ? selectedDateEventInfo.id : selectedDate.id),
-        title: (selectedDateEventInfo.id ? selectedDateEventInfo.title : selectedDate.title),
-        allDay: (selectedDateEventInfo.id ? selectedDateEventInfo.allDay : selectedDate.allDay),
-        start: (selectedDateEventInfo.id ? selectedDateEventInfo.start : selectedDate.start),
-        end: (selectedDateEventInfo.id ? selectedDateEventInfo.end : selectedDate.end),
-        color: (selectedDateEventInfo.id ? selectedDateEventInfo.color : selectedDate.color),
-        colorName: (selectedDateEventInfo.id ? selectedDateEventInfo.colorName : selectedDate.colorName),
-        description: (selectedDateEventInfo.id ? selectedDateEventInfo.description : selectedDate.description),
-        important: (selectedDateEventInfo.id ? selectedDateEventInfo.important : selectedDate.important),
-        display: 'block',
-        koreaLat: (selectedDateEventInfo.id ? selectedDateEventInfo.koreaLat : selectedDate.koreaLat),
-        koreaLng: (selectedDateEventInfo.id ? selectedDateEventInfo.koreaLng : selectedDate.koreaLng),
-        overseasLat: (selectedDateEventInfo.id ? selectedDateEventInfo.overseasLat : selectedDate.overseasLat),
-        overseasLng: (selectedDateEventInfo.id ? selectedDateEventInfo.overseasLng : selectedDate.overseasLng),
-        locationName: (selectedDateEventInfo.id ? selectedDateEventInfo.locationName : ''),
-        overseaLocationName: (selectedDateEventInfo.id ? selectedDateEventInfo.overseaLocationName : ''),
-        isKorea: (selectedDateEventInfo.id ? selectedDateEventInfo.isKorea : true),
-        user: (selectedDateEventInfo.id ? selectedDateEventInfo.user : selectedDate.user),
-    };
-
     const handleCloseModal = () => {
         setShowTodoDialog(false);
         setIsTodoButton(false);
         setShowAddArea(false);
+        setSelectedDateEventInfoDefault();
     };
 
     const handleShowAddrSearch = (isShow: boolean) => {
@@ -276,45 +255,50 @@ const AddArea: React.FC = () => {
         showToast('일정이 등록되었습니다.', { type: 'success' });
     };
 
+    const handleAddrArea = () => {
+        setShowAddArea(false);
+        setSelectedDateEventInfoDefault();
+    };
+
     useEffect(() => {
         setOpenColorBar(prevState => ({
             ...prevState,
-            selectedColor: dateData.color,
-            colorName: dateData.colorName
+            selectedColor: selectedDate.color,
+            colorName: selectedDate.colorName
         }));
 
-        setIsAllday(dateData.allDay);
+        setIsAllday(selectedDate.allDay);
 
         setMapCenter((prev) => {
             return {
                 ...prev,
-                koreaLat: dateData.koreaLat,
-                koreaLng: dateData.koreaLng,
-                overseasLat: dateData.overseasLat,
-                overseasLng: dateData.overseasLng,
+                koreaLat: selectedDate.koreaLat,
+                koreaLng: selectedDate.koreaLng,
+                overseasLat: selectedDate.overseasLat,
+                overseasLng: selectedDate.overseasLng,
             }
         });
 
-        if (dateData.locationName !== '') {
-            setSelectedAddr(dateData.locationName);
+        if (selectedDate.locationName !== '') {
+            setSelectedAddr(selectedDate.locationName);
         }
 
-        if (dateData.overseaLocationName !== '') {
-            setSelectedAddrOversea(dateData.overseaLocationName);
+        if (selectedDate.overseaLocationName !== '') {
+            setSelectedAddrOversea(selectedDate.overseaLocationName);
         }
 
-        if (!dateData.allDay) {
+        if (!selectedDate.allDay) {
             setSelectedTime((prevTime) => {
                 return {
                     ...prevTime,
-                    startTime: dateData.start.split('T')[1],
-                    endTime: dateData.end.split('T')[1]
+                    startTime: selectedDate.start.split('T')[1],
+                    endTime: selectedDate.end.split('T')[1]
                 }
             });
         }
 
-        setIsKorea(dateData.isKorea);
-    }, [dateData.id]);
+        setIsKorea(selectedDate.isKorea);
+    }, [selectedDate]);
 
     return (
         <>
@@ -324,12 +308,12 @@ const AddArea: React.FC = () => {
                         <CloseIcon />
                     </IconButton>
                     :
-                    <IconButton aria-label="delete" size="large" onClick={() => setShowAddArea(false)} sx={{ color: openColorBar.selectedColor, padding: "8px" }}>
+                    <IconButton aria-label="delete" size="large" onClick={handleAddrArea} sx={{ color: openColorBar.selectedColor, padding: "8px" }}>
                         <ArrowBackIcon />
                     </IconButton>
                 }
                 <div className='p-1'>
-                    {selectedDateEventInfo.id ?
+                    {selectedDate.id ?
                         <>
                             <button className="p-2">
                                 <FontAwesomeIcon icon={faTrash as IconProp} style={{ color: openColorBar.selectedColor }} />
@@ -348,7 +332,7 @@ const AddArea: React.FC = () => {
             <DialogContent>
                 <div className="text-gray-700 mb-4">
                     <DialogContentsDiv>
-                        <input type="text" placeholder="제목" name="title" className="outline-none w-full px-1" defaultValue={dateData.title} ref={(e) => { toDoValueRef.current['title'] = e }} />
+                        <input type="text" placeholder="제목" name="title" className="outline-none w-full px-1" defaultValue={selectedDate.title} ref={(e) => { toDoValueRef.current['title'] = e }} />
                     </DialogContentsDiv>
                     <DialogContentsDiv>
                         <div className="flex justify-between items-center my-1 px-1">
@@ -376,7 +360,7 @@ const AddArea: React.FC = () => {
                                 <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale={koLocale}>
                                     <DatePicker
                                         ref={dateRef}
-                                        defaultValue={dayjs(dateData.start)}
+                                        defaultValue={dayjs(selectedDate.start)}
                                         onChange={(date) => handleStartDate(date)}
                                         className={`w-22 sm:w-48 ${!dateValueCheck ? 'date-error' : ''}`}
                                         showDaysOutsideCurrentMonth
@@ -400,7 +384,7 @@ const AddArea: React.FC = () => {
                                     {!isAllday && <TimePicker
                                         ref={timeRef}
                                         className={
-                                            `w-22 sm:w-48 custom-input ${(dayjs(`${dayjs(dateData.start).format('YYYY-MM-DD')}T${selectedTime.startTime}`) > dayjs(`${dayjs(dateData.end).format('YYYY-MM-DD')}T${selectedTime.endTime}`)) ? 'date-error' : ''}`
+                                            `w-22 sm:w-48 custom-input ${(dayjs(`${dayjs(selectedDate.start).format('YYYY-MM-DD')}T${selectedTime.startTime}`) > dayjs(`${dayjs(selectedDate.end).format('YYYY-MM-DD')}T${selectedTime.endTime}`)) ? 'date-error' : ''}`
                                         }
                                         format="HH:mm:A"
                                         value={dayjs(selectedTime.startTime, 'HH:mm')}
@@ -430,7 +414,7 @@ const AddArea: React.FC = () => {
                             <div className="flex items-center">
                                 <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale={koLocale}>
                                     <DatePicker
-                                        defaultValue={(dateData.allDay ? (dateData.start.split('T')[0] === dateData.end.split('T')[0] ? dayjs(dateData.end) : dayjs(dateData.end).add(-1, 'day')) : dayjs(dateData.end))}
+                                        defaultValue={(selectedDate.allDay ? (selectedDate.start.split('T')[0] === selectedDate.end.split('T')[0] ? dayjs(selectedDate.end) : dayjs(selectedDate.end).add(-1, 'day')) : dayjs(selectedDate.end))}
                                         onChange={(date) => handleEndDate(date)}
                                         className={`w-22 sm:w-48 ${!dateValueCheck ? 'date-error' : ''}`}
                                         showDaysOutsideCurrentMonth
@@ -453,7 +437,7 @@ const AddArea: React.FC = () => {
                                     />
                                     {!isAllday && <TimePicker
                                         className={
-                                            `w-22 sm:w-48 custom-input ${(dayjs(`${dayjs(dateData.start).format('YYYY-MM-DD')}T${selectedTime.startTime}`) > dayjs(`${dayjs(dateData.end).format('YYYY-MM-DD')}T${selectedTime.endTime}`)) ? 'date-error' : ''}`
+                                            `w-22 sm:w-48 custom-input ${(dayjs(`${dayjs(selectedDate.start).format('YYYY-MM-DD')}T${selectedTime.startTime}`) > dayjs(`${dayjs(selectedDate.end).format('YYYY-MM-DD')}T${selectedTime.endTime}`)) ? 'date-error' : ''}`
                                         }
                                         format="HH:mm:A"
                                         value={dayjs(selectedTime.endTime, 'HH:mm')}
@@ -485,7 +469,7 @@ const AddArea: React.FC = () => {
                             </div>
                             <Switch
                                 color="primary"
-                                defaultChecked={dateData.important}
+                                defaultChecked={selectedDate.important}
                                 sx={{
                                     "& .MuiSwitch-thumb": { backgroundColor: openColorBar.selectedColor },
                                     "& .MuiSwitch-track": { backgroundColor: openColorBar.selectedColor },
@@ -588,7 +572,7 @@ const AddArea: React.FC = () => {
                         }
                     </DialogContentsDiv>
                     <DialogContentsDiv>
-                        <textarea placeholder="일정내용" className="outline-none w-full px-1 min-h-20" ref={(e) => { toDoValueRef.current['description'] = e }} name="description" defaultValue={dateData.description}></textarea>
+                        <textarea placeholder="일정내용" className="outline-none w-full px-1 min-h-20" ref={(e) => { toDoValueRef.current['description'] = e }} name="description" defaultValue={selectedDate.description}></textarea>
                     </DialogContentsDiv>
                 </div>
             </DialogContent>

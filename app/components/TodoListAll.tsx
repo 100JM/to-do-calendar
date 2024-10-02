@@ -1,15 +1,28 @@
-import { useEffect, useState } from 'react';
+import { useSession } from 'next-auth/react';
+import { useEffect, useState, useRef } from 'react';
+import useDateStore from '../store/date';
+import useModalStore from "../store/modal";
+import useToastStore from '../store/toast';
 
-import dayjs from 'dayjs';
+import dayjs, { Dayjs } from 'dayjs';
 
 import Button from '@mui/material/Button';
 import Menu from '@mui/material/Menu';
 import Checkbox from '@mui/material/Checkbox';
 import FormControlLabel from '@mui/material/FormControlLabel';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import 'dayjs/locale/ko';
 
 interface FilterListInterface {
     name: string;
     value: string;
+}
+
+interface FilterDateInterface {
+    startVal: string | null;
+    endVal: string | null;
 }
 
 const FILTER_LIST: FilterListInterface[] = [
@@ -27,20 +40,46 @@ const FILTER_LIST: FilterListInterface[] = [
     },
 ];
 
+const koLocale: string = dayjs.locale('ko');
+
 const TodoListAll: React.FC = () => {
-    const myTodoList:Array<any> = [];
+    const { data: session, status } = useSession();
+    const { todoList, setSelectedDateEventInfo } = useDateStore();
+    const { setShowAddArea, setIsTodoButton, setShowTodoDialog } = useModalStore();
+    const { showToast } = useToastStore();
+
     const [filter, setFilter] = useState<Array<any>>(FILTER_LIST.map(f => f.value));
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-    const [todoList, setTodolist] = useState<Array<any>>(myTodoList);
+    const [dateAnchorEl, setDateAnchorEl] = useState<null | HTMLElement>(null);
+    const [myTodoListAll, setMyTodoListAll] = useState<Array<any>>([]);
+    const [filterDate, setFilterDate] = useState<FilterDateInterface>({
+        startVal: null,
+        endVal: null
+    });
+    const [checkFilterDate, setCheckFilterDate] = useState<boolean>(true);
+
+    const dateRef = useRef<HTMLDivElement | null>(null);
+    const startDate = useRef<HTMLDivElement | null>(null);
+    const endDate = useRef<HTMLDivElement | null>(null);
 
     const open = Boolean(anchorEl);
+    const dateOpen = Boolean(dateAnchorEl);
 
-    const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    const handleFilterClick = (event: React.MouseEvent<HTMLButtonElement>) => {
         setAnchorEl(event.currentTarget);
     };
 
-    const handleClose = () => {
+    const handleDateClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+        setDateAnchorEl(event.currentTarget);
+        setCheckFilterDate(true);
+    };
+
+    const handleFilterClose = () => {
         setAnchorEl(null);
+    };
+
+    const handleDateClose = () => {
+        setDateAnchorEl(null);
     };
 
     const handleCheck = (value: string, isChecked: boolean) => {
@@ -65,8 +104,66 @@ const TodoListAll: React.FC = () => {
         }
     };
 
+    const handleClickTodo = (id: string) => {
+        setSelectedDateEventInfo(id);
+        setShowAddArea(true);
+        setIsTodoButton(true)
+        setShowTodoDialog(true);
+    };
+
+    const handleStartDate = (date: Dayjs | null) => {
+        const start = dayjs(date).format('YYYY-MM-DD');
+        const end = ((endDate.current) as HTMLInputElement).value;
+
+        if(start && end) {
+            if (start > end) {
+                showToast('시작일과 종료일이 올바르지 않습니다.', { type: 'error' });
+                setCheckFilterDate(false);
+                return;
+            } else {
+                setCheckFilterDate(true);
+                setFilterDate((prev) => {
+                    return {
+                        ...prev,
+                        startVal: start,
+                        endVal: end
+                    }
+                });
+            }
+        }
+    };
+
+    const handleEndDate = (date: Dayjs | null) => {
+        const end = dayjs(date).format('YYYY-MM-DD');
+        const start = ((startDate.current) as HTMLInputElement).value;
+
+        if(start && end) {
+            if (start > end) {
+                showToast('시작일과 종료일이 올바르지 않습니다.', { type: 'error' });
+                setCheckFilterDate(false);
+                return;
+            } else {
+                setCheckFilterDate(true);
+                setFilterDate((prev) => {
+                    return {
+                        ...prev,
+                        startVal: start,
+                        endVal: end
+                    }
+                });
+            }
+        }
+    };
+
+    const stopLabelEvt = (event: any) => {
+        event.preventDefault();
+        event.stopPropagation();
+    };
+
     useEffect(() => {
-        const filteredList = myTodoList.filter((todo) => {
+        let filteredList = todoList.filter((t) => {
+            return t.user === session?.userId;
+        }).filter((todo) => {
             const isEndDate = todo.allDay ? dayjs(todo.end).add(-1, 'day').format('YYYY-MM-DD') : todo.end.split('T')[0];
             const isOngoing = dayjs(isEndDate).startOf('day').diff(dayjs().startOf('day'), 'day');
 
@@ -85,26 +182,143 @@ const TodoListAll: React.FC = () => {
             return false;
         });
 
-        // setTodolist(filteredList);
-        setTodolist((prev) => {
+        if (filterDate.startVal && filterDate.endVal) {
+            filteredList = filteredList.filter((t) => {
+                if (!t.allDay) {
+                    return dayjs(filterDate.startVal).format('YYYY-MM-DD') <= dayjs(t.start.split('T')[0]).format('YYYY-MM-DD')
+                        &&
+                        dayjs(filterDate.endVal).format('YYYY-MM-DD') >= dayjs(t.end.split('T')[0]).format('YYYY-MM-DD');
+                } else {
+                    return dayjs(filterDate.startVal).format('YYYY-MM-DD') <= dayjs(t.start.split('T')[0]).format('YYYY-MM-DD')
+                        &&
+                        dayjs(filterDate.endVal).format('YYYY-MM-DD') > dayjs(t.end.split('T')[0]).format('YYYY-MM-DD');
+                }
+            });
+        } 
+
+        setMyTodoListAll((prev) => {
             if (JSON.stringify(prev) !== JSON.stringify(filteredList)) {
                 return filteredList;
             }
             return prev;
         });
-    }, [filter, myTodoList]);
+
+    }, [filter, todoList, session, filterDate]);
 
     return (
         <>
             <div className="w-full h-10 flex items-center pb-2 relative">
                 <span className="absolute left-1/2 transform -translate-x-1/2 text-lg">일정 목록</span>
+                <div className="mr-auto">
+                    <Button
+                        id="basic-button"
+                        aria-controls={dateOpen ? 'basic-menu' : undefined}
+                        aria-haspopup="true"
+                        aria-expanded={dateOpen ? 'true' : undefined}
+                        onClick={handleDateClick}
+                        style={{
+                            backgroundColor: "#1976d2",
+                            color: "#fff",
+                            padding: "2px",
+                            minWidth: "48px"
+                        }}
+                    >
+                        기간
+                    </Button>
+                    <Menu
+                        id="basic-menu"
+                        anchorEl={dateAnchorEl}
+                        open={dateOpen}
+                        onClose={handleDateClose}
+                        MenuListProps={{
+                            'aria-labelledby': 'basic-button',
+                        }}
+                        sx={{
+                            "& ul": { padding: "2px" }
+                        }}
+                    >
+                        <li className="p-1 m-1">
+                            <FormControlLabel
+                                style={{ margin: 0 }}
+                                sx={{
+                                    "& span": { fontSize: "14px" }
+                                }}
+                                control={
+                                    <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale={koLocale}>
+                                        <DatePicker
+                                            ref={dateRef}
+                                            value={filterDate.startVal ? dayjs(filterDate.startVal) : null}
+                                            onChange={(date) => handleStartDate(date)}
+                                            className={`w-22 ml-1 sm:w-48 ${!checkFilterDate ? 'date-error' : ''}`}
+                                            showDaysOutsideCurrentMonth
+                                            format="YYYY-MM-DD"
+                                            desktopModeMediaQuery="@media (min-width: 640px)"
+                                            sx={{
+                                                "& input": { height: "18px" },
+                                                "@media (max-width: 640px)": {
+                                                    "& input": { height: "8px", fontSize: "9px", textAlign: "center", padding: "14px 0 14px 14px" }
+                                                },
+                                                "& fieldset": { borderColor: "#3788d8" }
+                                            }}
+                                            inputRef={(e: any) => startDate.current = e}
+                                            localeText={{
+                                                toolbarTitle: '날짜 선택',
+                                                cancelButtonLabel: '취소',
+                                                okButtonLabel: '확인'
+                                            }}
+                                        />
+                                    </LocalizationProvider>
+                                }
+                                label={'시작일'}
+                                labelPlacement='start'
+                                onClick={stopLabelEvt}
+                            />
+                        </li>
+                        <li className="p-1 m-1">
+                            <FormControlLabel
+                                style={{ margin: 0 }}
+                                sx={{
+                                    "& span": { fontSize: "14px" }
+                                }}
+                                control={
+                                    <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale={koLocale}>
+                                        <DatePicker
+                                            value={filterDate.endVal ? dayjs(filterDate.endVal) : null}
+                                            onChange={(date) => handleEndDate(date)}
+                                            className={`w-22 ml-1 sm:w-48 ${!checkFilterDate ? 'date-error' : ''}`}
+                                            showDaysOutsideCurrentMonth
+                                            format="YYYY-MM-DD"
+                                            desktopModeMediaQuery="@media (min-width: 640px)"
+                                            sx={{
+                                                "& input": { height: "18px" },
+                                                "@media (max-width: 640px)": {
+                                                    "& input": { height: "8px", fontSize: "9px", textAlign: "center", padding: "14px 0 14px 14px" }
+                                                },
+                                                "& fieldset": { borderColor: "#3788d8" }
+                                            }}
+                                            inputRef={(e: any) => endDate.current = e}
+                                            localeText={{
+                                                toolbarTitle: '날짜 선택',
+                                                cancelButtonLabel: '취소',
+                                                okButtonLabel: '확인'
+                                            }}
+                                        />
+                                    </LocalizationProvider>
+                                }
+                                label={'종료일'}
+                                labelPlacement='start'
+                                onClick={stopLabelEvt}
+                            />
+                        </li>
+                    </Menu>
+                </div>
                 <div className="ml-auto">
                     <Button
                         id="basic-button"
                         aria-controls={open ? 'basic-menu' : undefined}
                         aria-haspopup="true"
                         aria-expanded={open ? 'true' : undefined}
-                        onClick={handleClick}
+                        onClick={handleFilterClick}
                         style={{
                             backgroundColor: "#1976d2",
                             color: "#fff",
@@ -118,7 +332,7 @@ const TodoListAll: React.FC = () => {
                         id="basic-menu"
                         anchorEl={anchorEl}
                         open={open}
-                        onClose={handleClose}
+                        onClose={handleFilterClose}
                         MenuListProps={{
                             'aria-labelledby': 'basic-button',
                         }}
@@ -154,13 +368,13 @@ const TodoListAll: React.FC = () => {
             </div>
             <div style={{ width: "100%", height: "calc(92% - 2.5rem)", overflowY: "auto" }}>
                 {
-                    (todoList.length > 0) ?
-                        todoList.map((i) => {
+                    (myTodoListAll.length > 0) ?
+                        myTodoListAll.map((i) => {
                             const importantEndDate: string = i.allDay ? dayjs(i.end).add(-1, 'day').format('YYYY-MM-DD') : i.end.split('T')[0];
                             const importantEndDday: number = dayjs(importantEndDate).startOf('day').diff(dayjs().startOf('day'), 'day');
 
                             return (
-                                <div key={i.id} className="p-2 border border-gray-300 rounded-xl shadow mb-3 flex cursor-pointer hover:bg-gray-100">
+                                <div key={i.id} className="p-2 border border-gray-300 rounded-xl shadow mb-3 flex cursor-pointer hover:bg-gray-100" onClick={() => handleClickTodo(i.id)}>
                                     <div className="w-4 rounded-md mr-2" style={{ backgroundColor: `${i.color}` }}></div>
                                     <div style={{ width: "calc(100% - 1.5rem)" }}>
                                         <div className="overflow-hidden text-ellipsis whitespace-nowrap">{i.title}</div>

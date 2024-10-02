@@ -52,7 +52,6 @@ const Calendar: React.FC = () => {
         router.push('search');
         setIsTodoButton(true);
         setShowAddArea(false);
-        setIsTodoButton(false);
     };
 
     const handleUserBtn = () => {

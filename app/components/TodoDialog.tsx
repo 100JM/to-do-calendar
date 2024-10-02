@@ -24,12 +24,13 @@ import { faClockRotateLeft, faThumbTack, faCircleXmark, faCirclePlus, faTrash, f
 
 const TodoDialog: React.FC = () => {
     const { showTodoDialog, setShowTodoDialog, showAddArea, setShowAddArea, isTodoButton, setIsTodoButton } = useModalStore();
-    const { selectedDate, selectedDateEventList } = useDateStore();
+    const { selectedDate, selectedDateEventList, setSelectedDateEventInfoDefault } = useDateStore();
 
     const handleCloseModal = () => {
         setShowTodoDialog(false);
         setIsTodoButton(false);
         setShowAddArea(false);
+        setSelectedDateEventInfoDefault();
     };
 
     return (
