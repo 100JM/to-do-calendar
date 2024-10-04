@@ -4,9 +4,12 @@ import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import { useState, useEffect, useRef } from 'react';
 
+import useTodoList from '../hooks/useSWR/useTodoList';
 import useModalStore from '../store/modal';
 import useCalendarMenu from '../store/calendarMenu';
 import useDateStore from '../store/date';
+import useToastStore from '../store/toast';
+
 import ImportantTodoList from './ImportantTodoList';
 import TodoListAll from './TodoListAll';
 
@@ -42,11 +45,36 @@ const Calendar: React.FC = () => {
 
     const { bottomMenu, setBottomMenu, isFadeIn, setIsFadeIn } = useCalendarMenu();
     const { setShowTodoDialog, setIsTodoButton, setShowAddArea, setShowUserDialog } = useModalStore();
-    const { setClickedDate, setTodayDate, todoList, setSelectedDateEventList } = useDateStore();
+    const { setClickedDate, setTodayDate, todoList, setTodoList, setSelectedDateEventList } = useDateStore();
+    const { showToast } = useToastStore();
 
     const [myTodoList, setMyTodoList] = useState<Array<any>>([]);
 
     const logOutBtnRef = useRef<HTMLButtonElement | null>(null);
+
+    const slideVariants = {
+        hidden: { x: '-100%', opacity: 0 },
+        visible: { x: '0%', opacity: 1 },
+        exit: { x: '-100%', opacity: 0 },
+    };
+
+    const transitionSettings = {
+        type: "tween",
+        damping: 15,
+        stiffness: 60,
+        duration: 0.5
+    };
+
+    const fadeVariants = {
+        hidden: { opacity: 0 },
+        visible: { opacity: 1 },
+        exit: { opacity: 0 }
+    };
+
+    const fadeTransitionSettings = {
+        duration: 1,
+        ease: "easeInOut"
+    };
 
     const handleSearchBtn = () => {
         router.push('search');
@@ -57,8 +85,6 @@ const Calendar: React.FC = () => {
     const handleUserBtn = () => {
         setShowUserDialog(true);
     }
-
-    const defaultStartDate: string = new Date().toISOString();
 
     const dateClickEvt = (arg: DateClickArg) => {
         arg.jsEvent.stopPropagation();
@@ -93,10 +119,6 @@ const Calendar: React.FC = () => {
     };
 
     const desktopMenuEvt = (value: string) => {
-        // if (value === 'importantTodo') {
-        //   dispatch(dateAction.getImportantTodoList());
-        // }
-
         setBottomMenu(value);
     };
 
@@ -113,30 +135,6 @@ const Calendar: React.FC = () => {
         setShowTodoDialog(true);
         setShowAddArea(true);
         setTodayDate();
-    };
-
-    const slideVariants = {
-        hidden: { x: '-100%', opacity: 0 },
-        visible: { x: '0%', opacity: 1 },
-        exit: { x: '-100%', opacity: 0 },
-    };
-
-    const transitionSettings = {
-        type: "tween",
-        damping: 15,
-        stiffness: 60,
-        duration: 0.5
-    };
-
-    const fadeVariants = {
-        hidden: { opacity: 0 },
-        visible: { opacity: 1 },
-        exit: { opacity: 0 }
-    };
-
-    const fadeTransitionSettings = {
-        duration: 1,
-        ease: "easeInOut"
     };
 
     const updateUserBtn = () => {
@@ -163,6 +161,8 @@ const Calendar: React.FC = () => {
         }
     };
 
+    const { todoData, error, isLoading } = useTodoList(session?.userId);
+
     useEffect(() => {
         if (status === 'unauthenticated') {
             router.replace('/');
@@ -179,22 +179,11 @@ const Calendar: React.FC = () => {
             }
         };
 
-    }, [session, bottomMenu]);
-
-    useEffect(() => {
-        if (todoList.length > 0) {
-            const mine = todoList.filter((todo) => {
-                return todo.user === session?.userId;
-            });
-
-            setMyTodoList(mine);
-        }
-
-    }, [session?.userId, todoList])
+    }, [session, bottomMenu, isLoading]);
 
     return (
         <>
-            {status === 'unauthenticated' ?
+            {status === 'unauthenticated' && isLoading ?
                 null
                 :
                 <AnimatePresence>
@@ -231,7 +220,7 @@ const Calendar: React.FC = () => {
                                     right: 'searchButton',
                                 }}
                                 dateClick={dateClickEvt}
-                                events={myTodoList}
+                                events={todoList}
                                 displayEventTime={false}
                                 timeZone='UTC'
                             />
@@ -263,16 +252,16 @@ const Calendar: React.FC = () => {
                                 key="importantTodo"
                                 icon={
                                     <Badge
-                                        // badgeContent={
-                                        //     importantMyTodoList.filter((i) => {
-                                        //         const importantEndDate: string = i.allDay ? dayjs(i.end).add(-1, 'day').format('YYYY-MM-DD') : i.end.split('T')[0];
-                                        //         const importantEndDday: number = dayjs(importantEndDate).startOf('day').diff(dayjs().startOf('day'), 'day');
+                                        badgeContent={
+                                            todoList.filter((t) => t.important).filter((i: any) => {
+                                                const importantEndDate: string = i.allDay ? dayjs(i.end).add(-1, 'day').format('YYYY-MM-DD') : i.end.split('T')[0];
+                                                const importantEndDday: number = dayjs(importantEndDate).startOf('day').diff(dayjs().startOf('day'), 'day');
 
-                                        //         return (
-                                        //             importantEndDday >= 0 && importantEndDday <= 3
-                                        //         )
-                                        //     }).length
-                                        // }
+                                                return (
+                                                    importantEndDday >= 0 && importantEndDday <= 3
+                                                );
+                                            }).length
+                                        }
                                         color="error">
                                         <PushPinIcon />
                                     </Badge>
@@ -292,7 +281,7 @@ const Calendar: React.FC = () => {
                         }}>
                             <BottomNavigation
                                 showLabels
-                                // value={bottomMenu}
+                                value={bottomMenu}
                                 onChange={handleBottomMenuChange}
                                 sx={{
                                     width: "100%",
@@ -311,21 +300,20 @@ const Calendar: React.FC = () => {
                                     value="importantTodo"
                                     icon={
                                         <Badge
-                                            // badgeContent={
-                                            //     importantMyTodoList.filter((i) => {
-                                            //         const importantEndDate: string = i.allDay ? dayjs(i.end).add(-1, 'day').format('YYYY-MM-DD') : i.end.split('T')[0];
-                                            //         const importantEndDday: number = dayjs(importantEndDate).startOf('day').diff(dayjs().startOf('day'), 'day');
-
-                                            //         return (
-                                            //             importantEndDday >= 0 && importantEndDday <= 3
-                                            //         )
-                                            //     }).length
-                                            // }
+                                            badgeContent={
+                                                todoList.filter((t) => t.important).filter((i: any) => {
+                                                    const importantEndDate: string = i.allDay ? dayjs(i.end).add(-1, 'day').format('YYYY-MM-DD') : i.end.split('T')[0];
+                                                    const importantEndDday: number = dayjs(importantEndDate).startOf('day').diff(dayjs().startOf('day'), 'day');
+    
+                                                    return (
+                                                        importantEndDday >= 0 && importantEndDday <= 3
+                                                    );
+                                                }).length
+                                            }
                                             color="error">
                                             <PushPinIcon />
                                         </Badge>
                                     }
-                                // onClick={() => dispatch(dateAction.getImportantTodoList())}
                                 />
                             </BottomNavigation>
                         </Box>

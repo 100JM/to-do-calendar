@@ -38,14 +38,9 @@ const defaultDate: string = new Date().toISOString();
 
 const UserDialog: React.FC = () => {
     const { data: session, status } = useSession();
-    const { showUserDialog, setShowUserDialog } = useModalStore();
+    const { showUserDialog, setShowUserDialog, showComfirm, setShowComfirm, comfirmText, setComfirmText } = useModalStore();
     const { todoList } = useDateStore();
 
-    const [showComfirm, setShowComfirm] = useState<boolean>(false);
-    const [comfirmText, setComfirmText] = useState<ComfirmTextInterface>({
-        title: '',
-        body: '',
-    });
     const [myTodoListCnt, setMyTodoListCnt] = useState<myTodoListCntInterface>({
         all: 0,
         ongoing: 0,
@@ -60,30 +55,16 @@ const UserDialog: React.FC = () => {
         disconnectBody: '카카오 계정 연결을 해제하시겠습니까?\n해제 후 재이용 시 로그인을 필요로 하며 등록된 데이터는 지워지지 않습니다.',
     };
 
-    const handleCloseComfirmDialog = () => {
-        setShowComfirm(false);
-        setComfirmText((prev) => {
-            return {
-                ...prev,
-                title: '',
-                body: ''
-            }
-        });
-    };
-
     const handleComfirm = (title: string, body: string) => {
         setShowComfirm(true);
-        setComfirmText((prev) => {
-            return {
-                ...prev,
-                title: title,
-                body: body
-            }
+        setComfirmText({
+            title: title,
+            body: body
         });
     };
 
     useEffect(() => {
-        const all = todoList.filter((t) => t.user === session?.userId);
+        const all = todoList;
         const ongoing = all.filter((o) => {
             const todoEnday = o.allDay ? dayjs(o.end).add(-1, 'day').format('YYYY-MM-DD') : o.end.split('T')[0];
             return todoEnday >= dayjs(defaultDate).format('YYYY-MM-DD');
@@ -164,7 +145,7 @@ const UserDialog: React.FC = () => {
                             </div>
                         </DialogContent>
                     </Dialog>
-                    {showComfirm && <ComfirmDialog showComfirm={showComfirm} handleCloseComfirmDialog={handleCloseComfirmDialog} comfirmText={comfirmText} />}
+                    {showComfirm && <ComfirmDialog />}
                 </>
             }
         </>

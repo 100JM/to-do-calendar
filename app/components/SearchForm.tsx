@@ -55,9 +55,7 @@ const SearchForm: React.FC = () => {
             const keyword = value.replace(/\s/g, '').toLowerCase();
 
             if (keyword) {
-                const searchedData = todoList.filter((t) => {
-                    return t.user === session?.userId;
-                }).filter((todo) => {
+                const searchedData = todoList.filter((todo) => {
                     if (todo.title?.replace(/\s/g, '').toLowerCase().includes(keyword) || todo.description?.replace(/\s/g, '').toLowerCase().includes(keyword)) {
                         return todo;
                     }

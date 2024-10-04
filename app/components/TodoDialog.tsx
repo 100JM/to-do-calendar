@@ -7,6 +7,7 @@ import useDateStore from '../store/date';
 import DialogContentsDiv from './dialog/DialogContentsDiv';
 import AddArea from './dialog/AddArea';
 import TodoList from './dialog/TodoList';
+import ComfirmDialog from './dialog/ComfrimDialog';
 
 import dayjs, { Dayjs } from 'dayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
@@ -23,7 +24,7 @@ import { IconProp } from '@fortawesome/fontawesome-svg-core'
 import { faClockRotateLeft, faThumbTack, faCircleXmark, faCirclePlus, faTrash, faCircleCheck, faPenToSquare, faMapLocationDot, faMagnifyingGlass, faArrowRotateLeft } from '@fortawesome/free-solid-svg-icons';
 
 const TodoDialog: React.FC = () => {
-    const { showTodoDialog, setShowTodoDialog, showAddArea, setShowAddArea, isTodoButton, setIsTodoButton } = useModalStore();
+    const { showTodoDialog, setShowTodoDialog, showAddArea, setShowAddArea, isTodoButton, setIsTodoButton, showComfirm, setShowComfirm, setComfirmText } = useModalStore();
     const { selectedDate, selectedDateEventList, setSelectedDateEventInfoDefault } = useDateStore();
 
     const handleCloseModal = () => {
@@ -74,6 +75,7 @@ const TodoDialog: React.FC = () => {
                     }
                 </Dialog>
             }
+            {showComfirm && <ComfirmDialog />}
         </>
     );
 };

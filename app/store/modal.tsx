@@ -9,6 +9,13 @@ interface ModalStore {
     setIsTodoButton: (isClick: boolean) => void;
     showUserDialog: boolean;
     setShowUserDialog: (isShow: boolean) => void;
+    showComfirm: boolean;
+    setShowComfirm: (isShow: boolean) => void;
+    comfirmText: {
+        title: string;
+        body: string;
+    };
+    setComfirmText: (text: any) => void;
 }
 
 const useModalStore = create<ModalStore>((set) => ({
@@ -20,6 +27,13 @@ const useModalStore = create<ModalStore>((set) => ({
     setIsTodoButton: (isClick: boolean) => set({ isTodoButton: isClick }),
     showUserDialog: false,
     setShowUserDialog: (isShow: boolean) => set({ showUserDialog: isShow }),
+    showComfirm: false,
+    setShowComfirm: (isShow: boolean) => set({ showComfirm: isShow }),
+    comfirmText: {
+        title: '',
+        body: ''
+    },
+    setComfirmText: (text: any) => set({ comfirmText: text }),
 }));
 
 export default useModalStore;

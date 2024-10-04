@@ -1,30 +1,51 @@
-import useModalStore from '@/app/store/modal';
 import { signOut } from 'next-auth/react';
 import { useSession } from 'next-auth/react';
+import useModalStore from '@/app/store/modal';
+import useDateStore from '@/app/store/date';
+import useToastStore from '@/app/store/toast';
+import useDeleteTodo from '@/app/hooks/useSWR/useDeleteTodo';
 
 import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
 import Button from '@mui/material/Button';
-import { faUserSlash, faArrowRightFromBracket } from '@fortawesome/free-solid-svg-icons';
+import { faUserSlash, faArrowRightFromBracket, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
 
-interface ComfirmInterface {
-    showComfirm: boolean;
-    handleCloseComfirmDialog: () => void;
-    comfirmText: {
-        title: string,
-        body: string,
-    };
-}
 
-const ComfirmDialog: React.FC<ComfirmInterface> = ({ showComfirm, handleCloseComfirmDialog, comfirmText }) => {
+const ComfirmDialog: React.FC = () => {
     const { data: session, status } = useSession();
 
-    const { setShowUserDialog } = useModalStore();
+    const { setShowUserDialog, showComfirm, comfirmText, setShowComfirm, setComfirmText, setShowTodoDialog, setIsTodoButton, setShowAddArea } = useModalStore();
+    const { deleteId, setDeletedId, setSelectedDateEventInfoDefault } = useDateStore();
+    const { showToast } = useToastStore();
+
     const accessToken: string | undefined = session?.accessToken;
+
+    const handleCloseModal = () => {
+        setShowTodoDialog(false);
+        setIsTodoButton(false);
+        setShowAddArea(false);
+        setSelectedDateEventInfoDefault();
+    };
+
+    const handleCloseComfirmDialog = () => {
+        setShowComfirm(false);
+        setComfirmText({
+            title: '',
+            body: ''
+        });
+        setDeletedId('');
+    };
+
+    const handleDelete = async () => {
+        await useDeleteTodo(deleteId, session?.userId);
+        handleCloseComfirmDialog();
+        handleCloseModal();
+        showToast('일정이 삭제되었습니다.', { type: 'success' });
+    }
 
     const handleLogout = () => {
         handleCloseComfirmDialog();
@@ -37,6 +58,8 @@ const ComfirmDialog: React.FC<ComfirmInterface> = ({ showComfirm, handleCloseCom
             handleLogout();
         } else if (comfirmText.title === '연결 해제') {
             handleDisconnect();
+        } else if (comfirmText.title === '일정 삭제') {
+            handleDelete();
         }
     };
 
@@ -93,7 +116,7 @@ const ComfirmDialog: React.FC<ComfirmInterface> = ({ showComfirm, handleCloseCom
         >
             <DialogTitle style={{color: "#1976d2"}}>
                 {`${comfirmText.title} `}
-                <FontAwesomeIcon icon={(comfirmText.title === '로그아웃' ? faArrowRightFromBracket : faUserSlash) as IconProp} />
+                <FontAwesomeIcon icon={(comfirmText.title === '로그아웃' ? faArrowRightFromBracket : (comfirmText.title === '연결 해제' ? faUserSlash : faTrash)) as IconProp} />
             </DialogTitle>
             <DialogContent>
                 {

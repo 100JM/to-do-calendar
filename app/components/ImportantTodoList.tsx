@@ -19,9 +19,7 @@ const ImportantTodoList: React.FC = () => {
     };
 
     useEffect(() => {
-        const myList = todoList.filter((t) => {
-            return t.user === session?.userId;
-        }).filter((todo) => {
+        const myList = todoList.filter((todo) => {
             return todo.important === true;
         }).sort((a,b) => {
             const dateA = new Date(a.end.split('T')[0]);

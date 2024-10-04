@@ -161,9 +161,7 @@ const TodoListAll: React.FC = () => {
     };
 
     useEffect(() => {
-        let filteredList = todoList.filter((t) => {
-            return t.user === session?.userId;
-        }).filter((todo) => {
+        let filteredList = todoList.filter((todo) => {
             const isEndDate = todo.allDay ? dayjs(todo.end).add(-1, 'day').format('YYYY-MM-DD') : todo.end.split('T')[0];
             const isOngoing = dayjs(isEndDate).startOf('day').diff(dayjs().startOf('day'), 'day');
 
@@ -191,7 +189,7 @@ const TodoListAll: React.FC = () => {
                 } else {
                     return dayjs(filterDate.startVal).format('YYYY-MM-DD') <= dayjs(t.start.split('T')[0]).format('YYYY-MM-DD')
                         &&
-                        dayjs(filterDate.endVal).format('YYYY-MM-DD') > dayjs(t.end.split('T')[0]).format('YYYY-MM-DD');
+                        dayjs(filterDate.endVal).format('YYYY-MM-DD') >= dayjs(t.end.split('T')[0]).add(-1, 'day').format('YYYY-MM-DD');
                 }
             });
         } 
@@ -370,8 +368,8 @@ const TodoListAll: React.FC = () => {
                 {
                     (myTodoListAll.length > 0) ?
                         myTodoListAll.map((i) => {
-                            const importantEndDate: string = i.allDay ? dayjs(i.end).add(-1, 'day').format('YYYY-MM-DD') : i.end.split('T')[0];
-                            const importantEndDday: number = dayjs(importantEndDate).startOf('day').diff(dayjs().startOf('day'), 'day');
+                            const endDate: string = i.allDay ? dayjs(i.end).add(-1, 'day').format('YYYY-MM-DD') : i.end.split('T')[0];
+                            const endDday: number = dayjs(endDate).startOf('day').diff(dayjs().startOf('day'), 'day');
 
                             return (
                                 <div key={i.id} className="p-2 border border-gray-300 rounded-xl shadow mb-3 flex cursor-pointer hover:bg-gray-100" onClick={() => handleClickTodo(i.id)}>
@@ -389,23 +387,23 @@ const TodoListAll: React.FC = () => {
                                             }
                                         </div>
                                         <div className="flex justify-between">
-                                            <div>{`종료일 ${importantEndDate}`}</div>
+                                            <div>{`종료일 ${endDate}`}</div>
                                             <div>
                                                 {
-                                                    (importantEndDday > 0) ?
+                                                    (endDday > 0) ?
                                                         (
-                                                            (importantEndDday <= 3) ?
+                                                            (endDday <= 3) ?
                                                                 <>
                                                                     <i className="bi bi-alarm text-red-500">
-                                                                        {` D-day ${importantEndDday}일`}
+                                                                        {` D-day ${endDday}일`}
                                                                     </i>
                                                                 </>
                                                                 :
-                                                                ` D-day ${importantEndDday}일`
+                                                                ` D-day ${endDday}일`
                                                         )
                                                         :
                                                         (
-                                                            (importantEndDday === 0) ?
+                                                            (endDday === 0) ?
                                                                 <>
                                                                     <i className="bi bi-alarm text-red-500">
                                                                         {'D-day 오늘'}

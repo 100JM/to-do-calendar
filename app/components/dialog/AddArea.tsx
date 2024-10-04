@@ -1,12 +1,16 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import { useSession } from 'next-auth/react';
 import 'leaflet/dist/leaflet.css';
 
 import useModalStore from '@/app/store/modal';
 import useCalendarMenu from '@/app/store/calendarMenu';
 import useDateStore from '@/app/store/date';
 import useToastStore from '@/app/store/toast';
+import useAddTodo from '@/app/hooks/useSWR/useAddTodo';
+import useDeleteTodo from '@/app/hooks/useSWR/useDeleteTodo';
+
 import DialogContentsDiv from './DialogContentsDiv';
 import DialogUiColor from './DialogUiColor';
 import UiColorButtons from './UiColorButtons';
@@ -33,6 +37,7 @@ import 'dayjs/locale/ko';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { IconProp } from '@fortawesome/fontawesome-svg-core'
 import { faClockRotateLeft, faThumbTack, faTrash, faCircleCheck, faPenToSquare, faMapLocationDot, faMagnifyingGlass, faArrowRotateLeft } from '@fortawesome/free-solid-svg-icons';
+import { title } from 'process';
 
 const koLocale: string = dayjs.locale('ko');
 
@@ -75,9 +80,10 @@ interface ToDoValueRefs {
 }
 
 const AddArea: React.FC = () => {
+    const { data: session } = useSession();
     const { bottomMenu } = useCalendarMenu();
-    const { isTodoButton, setShowAddArea, setShowTodoDialog, setIsTodoButton } = useModalStore();
-    const { selectedDate, setSelectedDateEventInfoDefault } = useDateStore();
+    const { isTodoButton, setShowAddArea, setShowTodoDialog, setIsTodoButton, setShowComfirm, setComfirmText } = useModalStore();
+    const { selectedDate, setSelectedDateEventInfoDefault, setDeletedId, deleteId } = useDateStore();
     const { showToast } = useToastStore();
 
     const defaultStartDateTime = dayjs().set('hour', 9).set('minute', 0).startOf('minute').format('HH:mm');
@@ -95,8 +101,8 @@ const AddArea: React.FC = () => {
         selectedColor: '#3788d8',
         colorName: '워터 블루'
     });
-    const [selectedAddr, setSelectedAddr] = useState<any>();
-    const [selectedAddrOversea, setSelectedAddrOversea] = useState<any>();
+    const [selectedAddr, setSelectedAddr] = useState<any>('');
+    const [selectedAddrOversea, setSelectedAddrOversea] = useState<any>('');
     const [mapCenter, setMapCenter] = useState<MapCenterInterface>({
         koreaLat: 37.5665,
         koreaLng: 126.9780,
@@ -234,12 +240,12 @@ const AddArea: React.FC = () => {
         }
     };
 
-    const handleSubmit = () => {
+    const handleSubmit =  async () => {
         const checkDateInput = dateRef.current?.classList.contains('date-error');
         const checkTimeInput = timeRef.current?.classList.contains('date-error');
 
         if (!(toDoValueRef.current.title as HTMLInputElement).value) {
-            showToast('제목을 입력해주세요.', { type: 'success' });
+            showToast('제목을 입력해주세요.', { type: 'error' });
             (toDoValueRef.current.title as HTMLInputElement).focus();
             return;
         }
@@ -251,8 +257,49 @@ const AddArea: React.FC = () => {
             return;
         }
 
+        let selectStartDateValue: string;
+        let selectEndDateValue: string;
+
+        if (isAllday) {
+            selectStartDateValue = (toDoValueRef.current.start as HTMLInputElement).value;
+            selectEndDateValue = dayjs(dayjs((toDoValueRef.current.end as HTMLInputElement).value).add(1, 'day')).format('YYYY-MM-DD');
+        } else {
+            selectStartDateValue = `${(toDoValueRef.current.start as HTMLInputElement).value}T${selectedTime.startTime}`;
+            selectEndDateValue = `${(toDoValueRef.current.end as HTMLInputElement).value}T${selectedTime.endTime}`;
+        }
+
+        const newToDo: object = {
+            title: (toDoValueRef.current.title as HTMLInputElement).value,
+            allDay: (toDoValueRef.current.allDay as HTMLInputElement).checked,
+            start: selectStartDateValue,
+            end: selectEndDateValue,
+            color: openColorBar.selectedColor,
+            colorName: openColorBar.colorName,
+            description: (toDoValueRef.current.description as HTMLTextAreaElement).value,
+            important: (toDoValueRef.current.important as HTMLInputElement).checked,
+            display: 'block',
+            koreaLat: (isKorea ? mapCenter.koreaLat : 37.5665),
+            koreaLng: (isKorea ? mapCenter.koreaLng : 126.9780),
+            overseasLat: (isKorea ? 37.5665 : mapCenter.overseasLat),
+            overseasLng: (isKorea ? 126.9780 : mapCenter.overseasLng),
+            locationName: (isKorea ? selectedAddr : ''),
+            overseaLocationName: (isKorea ? '' : selectedAddrOversea),
+            isKorea: isKorea,
+            user: session?.userId
+        };
+
+        await useAddTodo(newToDo, session?.userId);
         handleCloseModal();
         showToast('일정이 등록되었습니다.', { type: 'success' });
+    };
+
+    const handleDeleteComfirm = (id: string) => {
+        setShowComfirm(true);
+        setDeletedId(id);
+        setComfirmText({
+            title: '일정 삭제',
+            body: '해당 일정을 삭제하시겠습니까?\n삭제 후 복구가 불가능합니다.'
+        });
     };
 
     const handleAddrArea = () => {
@@ -316,7 +363,7 @@ const AddArea: React.FC = () => {
                     {selectedDate.id ?
                         <>
                             <button className="p-2">
-                                <FontAwesomeIcon icon={faTrash as IconProp} style={{ color: openColorBar.selectedColor }} />
+                                <FontAwesomeIcon icon={faTrash as IconProp} style={{ color: openColorBar.selectedColor }} onClick={() => handleDeleteComfirm(selectedDate.id)} />
                             </button>
                             <button className="p-2">
                                 <FontAwesomeIcon icon={faPenToSquare as IconProp} style={{ color: openColorBar.selectedColor }} />
