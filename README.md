@@ -19,25 +19,11 @@
     <div><img src="https://img.shields.io/badge/mui-007FFF?style=for-the-badge&logo=mui&logoColor=white"></div>
     <div><img src="https://img.shields.io/badge/swr-000000?style=for-the-badge&logo=swr&logoColor=white"></div>
     <div><img src="https://img.shields.io/badge/framermotion-0055FF?style=for-the-badge&logo=framer&logoColor=white"></div>
-    <div><img src="https://img.shields.io/badge/fullcalendar-1976d2?style=for-the-badge&logo=fullcalendar&logoColor=white"></div>
+    <div>
+      <img src="https://img.shields.io/badge/fullcalendar-1976d2?style=for-the-badge&logo=fullcalendar&logoColor=white">
+      <span>JavaScript Calendar v6.1.15 (https://fullcalendar.io/)</span>
+    </div>
     <div><img src="https://img.shields.io/badge/zustand-433E38?style=for-the-badge&logo=zustand&logoColor=white"></div>
     <div><img src="https://img.shields.io/badge/mockapi-000000?style=for-the-badge&logo=mockapi&logoColor=white"></div>
   </div>
 </div>
-    
-
-
-    
-## Getting Started
-
-First, run the development server:
-
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
