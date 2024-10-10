@@ -132,15 +132,15 @@ const UserDialog: React.FC = () => {
                                     <div className="w-full">종료 일정: <span style={{ color: '#708090' }}>{myTodoListCnt.ended}</span></div>
                                     <div className="w-full">중요 일정: <span style={{ color: '#DC143C' }}>{myTodoListCnt.important}</span></div>
                                 </div>
-                                <div className="flex items-center justify-between text-slate-500">
+                                <div className="flex items-center justify-end text-slate-500">
                                     <button className="flex items-center text-xs text-red-500 hover:text-red-300" onClick={() => handleComfirm(comfirmComment.disconnectTitle, comfirmComment.disconnectBody)}>
                                         <span className="pr-1">계정 연결 해제</span>
                                         <FontAwesomeIcon icon={faUserSlash as IconProp} />
                                     </button>
-                                    <button className="flex items-center">
+                                    {/* <button className="flex items-center">
                                         <span className="pr-1">개인정보 제공 동의</span>
                                         <HelpIcon fontSize='small' />
-                                    </button>
+                                    </button> */}
                                 </div>
                             </div>
                         </DialogContent>

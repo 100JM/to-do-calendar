@@ -11,7 +11,7 @@ const useTodoList = (userId: string | undefined) => {
 
     
     useEffect(() => {
-        if (data) {
+        if (data && typeof(data) === 'object') {
             setTodoList(data);
         }
     }, [data, setTodoList]);

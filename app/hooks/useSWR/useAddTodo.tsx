@@ -1,6 +1,6 @@
 import { mutate } from 'swr';
 
-const useAddTodo = async (info: any, userId: string | undefined) => {
+export const useAddTodo = async (info: any, userId: string | undefined) => {
     const url = `${process.env.NEXT_PUBLIC_MOCKAPI}?user=${userId}`;
 
     try {
@@ -12,11 +12,11 @@ const useAddTodo = async (info: any, userId: string | undefined) => {
             body: JSON.stringify(info),
         });
 
-        if (!response.ok) {
-            throw new Error('Failed to add todo');
+        if (response.ok) {
+            mutate(url);
         }
 
-        mutate(url);
+        return response.ok;
 
     } catch (error) {
         console.error('Error adding todo:', error);
@@ -24,4 +24,26 @@ const useAddTodo = async (info: any, userId: string | undefined) => {
     }
 };
 
-export default useAddTodo;
+export const useUpdateTodo = async (info: any, userId: string | undefined, id: string) => {
+    const url = process.env.NEXT_PUBLIC_MOCKAPI;
+
+    try {
+        const response = await fetch(`${url}/${id}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(info),
+        });
+
+        if (response.ok) {
+            mutate(`${url}?user=${userId}`);
+        }
+
+        return response.ok;
+
+    } catch (error) {
+        console.error('Error updating todo:', error);
+        throw error;
+    }
+};

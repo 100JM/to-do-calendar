@@ -8,11 +8,17 @@ const useDeleteTodo = async (id: string, userId: string | undefined) => {
             method: 'DELETE',
         });
 
-        if (!response.ok) {
-            throw new Error('Failed to delete todo');
+        // if (!response.ok) {
+        //     throw new Error('Failed to delete todo');
+        // }
+
+        if (response.ok) {
+            mutate(`${url}?user=${userId}`);
         }
 
-        mutate(`${url}?user=${userId}`);
+        // mutate(`${url}?user=${userId}`);
+
+        return response.ok;
 
     } catch (error) {
         console.error('Error delete todo:', error);

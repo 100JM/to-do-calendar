@@ -8,8 +8,7 @@ import useModalStore from '@/app/store/modal';
 import useCalendarMenu from '@/app/store/calendarMenu';
 import useDateStore from '@/app/store/date';
 import useToastStore from '@/app/store/toast';
-import useAddTodo from '@/app/hooks/useSWR/useAddTodo';
-import useDeleteTodo from '@/app/hooks/useSWR/useDeleteTodo';
+import { useAddTodo, useUpdateTodo } from '@/app/hooks/useSWR/useAddTodo';
 
 import DialogContentsDiv from './DialogContentsDiv';
 import DialogUiColor from './DialogUiColor';
@@ -205,6 +204,15 @@ const AddArea: React.FC = () => {
                 }
             })
         }
+
+        const start = dayjs(`${((toDoValueRef.current.start) as HTMLInputElement).value}T${dayjs(date as Dayjs).format('HH:mm')}`);
+        const end = dayjs(`${((toDoValueRef.current.end) as HTMLInputElement).value}T${selectedTime.endTime}`);
+
+        if (start > end) {
+            setDateValueCheck(false);
+        } else {
+            setDateValueCheck(true);
+        }
     };
 
     const handleEndTime = (date: Dayjs | null) => {
@@ -216,11 +224,20 @@ const AddArea: React.FC = () => {
                 }
             })
         }
+
+        const start = dayjs(`${((toDoValueRef.current.start) as HTMLInputElement).value}T${selectedTime.startTime}`);
+        const end = dayjs(`${((toDoValueRef.current.end) as HTMLInputElement).value}T${dayjs(date as Dayjs).format('HH:mm')}`);
+
+        if (start > end) {
+            setDateValueCheck(false);
+        } else {
+            setDateValueCheck(true);
+        }
     };
 
     const handleStartDate = (date: Dayjs | null) => {
-        const start = dayjs(date).format('YYYY-MM-DD');
-        const end = ((toDoValueRef.current.end) as HTMLInputElement).value;
+        const start = isAllday ? dayjs(date).format('YYYY-MM-DD')  : dayjs(`${dayjs(date).format('YYYY-MM-DD')}T${selectedTime.startTime}`);
+        const end = isAllday ? ((toDoValueRef.current.end) as HTMLInputElement).value : dayjs(`${((toDoValueRef.current.end) as HTMLInputElement).value}T${selectedTime.endTime}`);
 
         if (start > end) {
             setDateValueCheck(false);
@@ -230,8 +247,8 @@ const AddArea: React.FC = () => {
     };
 
     const handleEndDate = (date: Dayjs | null) => {
-        const end = dayjs(date).format('YYYY-MM-DD');
-        const start = ((toDoValueRef.current.start) as HTMLInputElement).value;
+        const end = isAllday ? dayjs(date).format('YYYY-MM-DD')  : dayjs(`${dayjs(date).format('YYYY-MM-DD')}T${selectedTime.endTime}`);
+        const start = isAllday ? ((toDoValueRef.current.start) as HTMLInputElement).value : dayjs(`${((toDoValueRef.current.start) as HTMLInputElement).value}T${selectedTime.startTime}`);
 
         if (start > end) {
             setDateValueCheck(false);
@@ -240,6 +257,7 @@ const AddArea: React.FC = () => {
         }
     };
 
+    // 일정 등록
     const handleSubmit =  async () => {
         const checkDateInput = dateRef.current?.classList.contains('date-error');
         const checkTimeInput = timeRef.current?.classList.contains('date-error');
@@ -249,8 +267,6 @@ const AddArea: React.FC = () => {
             (toDoValueRef.current.title as HTMLInputElement).focus();
             return;
         }
-
-
 
         if (checkTimeInput || checkDateInput) {
             showToast('시작일과 종료일이 올바르지 않습니다.', { type: 'error' });
@@ -288,11 +304,74 @@ const AddArea: React.FC = () => {
             user: session?.userId
         };
 
-        await useAddTodo(newToDo, session?.userId);
-        handleCloseModal();
-        showToast('일정이 등록되었습니다.', { type: 'success' });
+        const addResult = await useAddTodo(newToDo, session?.userId);
+        
+        if (addResult) {
+            handleCloseModal();
+            showToast('일정이 등록되었습니다.', { type: 'success' });
+        } else {
+            showToast('일정 등록 중 오류가 발생했습니다.\n새로고침 후 다시 시도해주세요.', { type: 'error' });
+        }
     };
 
+    // 일정 수정
+    const handleUpdate = async (id: string) => {
+        const checkDateInput = dateRef.current?.classList.contains('date-error');
+        const checkTimeInput = timeRef.current?.classList.contains('date-error');
+
+        if (!(toDoValueRef.current.title as HTMLInputElement).value) {
+            showToast('제목을 입력해주세요.', { type: 'error' });
+            (toDoValueRef.current.title as HTMLInputElement).focus();
+            return;
+        }
+
+        if (checkTimeInput || checkDateInput) {
+            showToast('시작일과 종료일이 올바르지 않습니다.', { type: 'error' });
+            return;
+        }
+
+        let selectStartDateValue: string;
+        let selectEndDateValue: string;
+
+        if (isAllday) {
+            selectStartDateValue = (toDoValueRef.current.start as HTMLInputElement).value;
+            selectEndDateValue = dayjs(dayjs((toDoValueRef.current.end as HTMLInputElement).value).add(1, 'day')).format('YYYY-MM-DD');
+        } else {
+            selectStartDateValue = `${(toDoValueRef.current.start as HTMLInputElement).value}T${selectedTime.startTime}`;
+            selectEndDateValue = `${(toDoValueRef.current.end as HTMLInputElement).value}T${selectedTime.endTime}`;
+        }
+
+        const updatedToDo: object = {
+            title: (toDoValueRef.current.title as HTMLInputElement).value,
+            allDay: (toDoValueRef.current.allDay as HTMLInputElement).checked,
+            start: selectStartDateValue,
+            end: selectEndDateValue,
+            color: openColorBar.selectedColor,
+            colorName: openColorBar.colorName,
+            description: (toDoValueRef.current.description as HTMLTextAreaElement).value,
+            important: (toDoValueRef.current.important as HTMLInputElement).checked,
+            display: 'block',
+            koreaLat: (isKorea ? mapCenter.koreaLat : 37.5665),
+            koreaLng: (isKorea ? mapCenter.koreaLng : 126.9780),
+            overseasLat: (isKorea ? 37.5665 : mapCenter.overseasLat),
+            overseasLng: (isKorea ? 126.9780 : mapCenter.overseasLng),
+            locationName: (isKorea ? selectedAddr : ''),
+            overseaLocationName: (isKorea ? '' : selectedAddrOversea),
+            isKorea: isKorea,
+            user: session?.userId
+        };
+
+        const updateReuslt = await useUpdateTodo(updatedToDo, session?.userId, id);
+
+        if (updateReuslt) {
+            handleCloseModal();
+            showToast('일정이 수정되었습니다.', { type: 'success' });
+        } else {
+            showToast('일정 수정 중 오류가 발생했습니다.\n새로고침 후 다시 시도해주세요.', { type: 'error' });
+        }
+    };
+
+    // 일정 삭제
     const handleDeleteComfirm = (id: string) => {
         setShowComfirm(true);
         setDeletedId(id);
@@ -366,7 +445,7 @@ const AddArea: React.FC = () => {
                                 <FontAwesomeIcon icon={faTrash as IconProp} style={{ color: openColorBar.selectedColor }} onClick={() => handleDeleteComfirm(selectedDate.id)} />
                             </button>
                             <button className="p-2">
-                                <FontAwesomeIcon icon={faPenToSquare as IconProp} style={{ color: openColorBar.selectedColor }} />
+                                <FontAwesomeIcon icon={faPenToSquare as IconProp} style={{ color: openColorBar.selectedColor }} onClick={() => handleUpdate(selectedDate.id)} />
                             </button>
                         </>
                         :
@@ -431,7 +510,7 @@ const AddArea: React.FC = () => {
                                     {!isAllday && <TimePicker
                                         ref={timeRef}
                                         className={
-                                            `w-22 sm:w-48 custom-input ${(dayjs(`${dayjs(selectedDate.start).format('YYYY-MM-DD')}T${selectedTime.startTime}`) > dayjs(`${dayjs(selectedDate.end).format('YYYY-MM-DD')}T${selectedTime.endTime}`)) ? 'date-error' : ''}`
+                                            `w-22 sm:w-48 custom-input ${!dateValueCheck ? 'date-error' : ''}`
                                         }
                                         format="HH:mm:A"
                                         value={dayjs(selectedTime.startTime, 'HH:mm')}
@@ -484,7 +563,7 @@ const AddArea: React.FC = () => {
                                     />
                                     {!isAllday && <TimePicker
                                         className={
-                                            `w-22 sm:w-48 custom-input ${(dayjs(`${dayjs(selectedDate.start).format('YYYY-MM-DD')}T${selectedTime.startTime}`) > dayjs(`${dayjs(selectedDate.end).format('YYYY-MM-DD')}T${selectedTime.endTime}`)) ? 'date-error' : ''}`
+                                            `w-22 sm:w-48 custom-input ${!dateValueCheck ? 'date-error' : ''}`
                                         }
                                         format="HH:mm:A"
                                         value={dayjs(selectedTime.endTime, 'HH:mm')}
