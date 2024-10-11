@@ -22,8 +22,11 @@
     </p>
     <p>
       <img src="https://img.shields.io/badge/NextAuth.js-000000?style=for-the-badge&logo=NextAuth.js&logoColor=white">
+      <span>NextAuth.js(v4.24.8)를 통한 카카오 & 구글 로그인</span>
+    </p>
+    <p>
       <img src="https://img.shields.io/badge/kakao-FFCD00?style=for-the-badge&logo=kakao&logoColor=white">
-      <span>next-auth(v4.24.8)를 통한 카카오 로그인(v2.1.1) & 카카오 지도(v1.1.27) & 주소 검색</span>
+      <span>카카오 지도(v1.1.27) & 주소 검색</span>
     </p>
     <p>
       <img src="https://img.shields.io/badge/openstreetmap-7EBC6F?style=for-the-badge&logo=openstreetmap&logoColor=white">
