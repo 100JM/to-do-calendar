@@ -471,8 +471,7 @@ const AddArea: React.FC = () => {
                                 checked={isAllday}
                                 onChange={handleIsAllday}
                                 sx={{
-                                    "& .MuiSwitch-thumb": { backgroundColor: openColorBar.selectedColor },
-                                    "& .MuiSwitch-track": { backgroundColor: openColorBar.selectedColor },
+                                    "& .MuiSwitch-switchBase.Mui-checked": { color: openColorBar.selectedColor },
                                     "& .Mui-checked+.MuiSwitch-track": { backgroundColor: openColorBar.selectedColor },
                                 }}
                                 inputRef={(e) => { toDoValueRef.current['allDay'] = e }}
@@ -597,8 +596,7 @@ const AddArea: React.FC = () => {
                                 color="primary"
                                 defaultChecked={selectedDate.important}
                                 sx={{
-                                    "& .MuiSwitch-thumb": { backgroundColor: openColorBar.selectedColor },
-                                    "& .MuiSwitch-track": { backgroundColor: openColorBar.selectedColor },
+                                    "& .MuiSwitch-switchBase.Mui-checked": { color: openColorBar.selectedColor },
                                     "& .Mui-checked+.MuiSwitch-track": { backgroundColor: openColorBar.selectedColor },
                                 }}
                                 inputRef={(e) => { toDoValueRef.current['important'] = e }}

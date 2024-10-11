@@ -22,6 +22,7 @@ const KakaoMap: React.FC<KakaoMapInterface> = ({ mapCenter }) => {
                 center={{ lat: mapCenter.lat, lng: mapCenter.lng }}
                 style={{ height: '150px' }}
                 level={5}
+                draggable={true}
             >
                 <MapMarker position={{ lat: mapCenter.lat, lng: mapCenter.lng }} />
                 <ZoomControl position={'TOPLEFT'} />
