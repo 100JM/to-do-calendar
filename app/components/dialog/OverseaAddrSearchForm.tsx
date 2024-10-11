@@ -2,7 +2,9 @@
 
 import React, { useState, useRef } from 'react';
 import axios from 'axios';
+import useToastStore from '@/app/store/toast';
 
+import AddrSearchSkeleton from './AddrSearchSkeleton';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { IconProp } from '@fortawesome/fontawesome-svg-core'
 import { faMapLocationDot, faLocationDot, faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
@@ -15,16 +17,27 @@ interface OverseaAddrSearchFormInterface {
 const OverseaAddrSearchForm: React.FC<OverseaAddrSearchFormInterface> = ({ selectedColor, handleSetOverseaAddr }) => {
     const [searchedAddr, setSearchedAddr] = useState<Array<any>>([]);
     const [isSearchEnd, setIsSearchEnd] = useState<boolean>(false);
+    const [isLoading, setIsLoading] = useState<boolean>(false);
     const searchInputRef = useRef<HTMLInputElement | null>(null);
 
+    const { showToast } = useToastStore();
+
     const nominatimAddrSearch = async () => {
+        const searchKeyword = (searchInputRef.current as HTMLInputElement).value;
+
+        if (!searchKeyword.trim()) {
+            showToast('검색어를 입력해주세요.', { type: 'error' });
+            return;
+        }
+
         setSearchedAddr([]);
         setIsSearchEnd(false);
+        setIsLoading(true);
 
         try {
             const response = await axios.get('https://nominatim.openstreetmap.org/search', {
                 params: {
-                    q: (searchInputRef.current as HTMLInputElement).value,
+                    q: searchKeyword,
                     format: 'json',
                     addressdetails: 1,
                     limit: 10
@@ -37,6 +50,7 @@ const OverseaAddrSearchForm: React.FC<OverseaAddrSearchFormInterface> = ({ selec
             console.error('Error fetching data from Nominatim:', error);
         } finally {
             setIsSearchEnd(true);
+            setIsLoading(false);
         }
     };
 
@@ -66,17 +80,17 @@ const OverseaAddrSearchForm: React.FC<OverseaAddrSearchFormInterface> = ({ selec
             </div>
             <div className="w-full my-2 overflow-y-auto" style={{ height: "calc(100% - 3.5rem)" }}>
                 {
-                    searchedAddr.length === 0 && !isSearchEnd &&
+                    searchedAddr.length === 0 && !isSearchEnd && !isLoading &&
                     <div className="w-full h-full flex justify-center items-center">
                         <FontAwesomeIcon icon={faMapLocationDot as IconProp} style={{ color: "rgb(220 223 228)", fontSize: "40px" }} />
                     </div>
                 }
                 {
-                    searchedAddr.length === 0 && isSearchEnd &&
+                    searchedAddr.length === 0 && isSearchEnd && !isLoading &&
                     <div className="w-full h-full flex justify-center items-center">검색 결과가 없습니다.</div>
                 }
                 {
-                    searchedAddr.length > 0 &&
+                    searchedAddr.length > 0 && isSearchEnd && !isLoading &&
                     <ul>
                         {searchedAddr.map((l) => (
                             <li key={l.place_id} className="p-2 border-b cursor-pointer hover:bg-stone-100" onClick={() => handleSetOverseaAddr(l)}>
@@ -85,6 +99,10 @@ const OverseaAddrSearchForm: React.FC<OverseaAddrSearchFormInterface> = ({ selec
                             </li>
                         ))}
                     </ul>
+                }
+                {
+                    isLoading &&
+                    <AddrSearchSkeleton />
                 }
             </div>
         </div>

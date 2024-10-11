@@ -48,7 +48,7 @@ const UserDialog: React.FC = () => {
         important: 0,
     });
 
-    const comfirmComment:any = {
+    const comfirmComment: any = {
         logoutTitle: '로그아웃',
         logoutBody: '로그아웃 하시겠습니까?\n완료된 후 로그인 페이지로 이동합니다.',
         disconnectTitle: '연결 해제',
@@ -132,11 +132,19 @@ const UserDialog: React.FC = () => {
                                     <div className="w-full">종료 일정: <span style={{ color: '#708090' }}>{myTodoListCnt.ended}</span></div>
                                     <div className="w-full">중요 일정: <span style={{ color: '#DC143C' }}>{myTodoListCnt.important}</span></div>
                                 </div>
-                                <div className="flex items-center justify-end text-slate-500">
-                                    <button className="flex items-center text-xs text-red-500 hover:text-red-300" onClick={() => handleComfirm(comfirmComment.disconnectTitle, comfirmComment.disconnectBody)}>
-                                        <span className="pr-1">계정 연결 해제</span>
-                                        <FontAwesomeIcon icon={faUserSlash as IconProp} />
-                                    </button>
+                                <div className="flex items-center justify-between text-slate-500">
+                                    <div className="flex items-center text-xs">
+                                        <span className="pr-1">로그인 제공 : {session?.provider}</span>
+                                    </div>
+                                    {
+                                        session?.provider === 'kakao' ?
+                                        <button className="flex items-center text-xs text-red-500 hover:text-red-300" onClick={() => handleComfirm(comfirmComment.disconnectTitle, comfirmComment.disconnectBody)}>
+                                            <span className="pr-1">계정 연결 해제</span>
+                                            <FontAwesomeIcon icon={faUserSlash as IconProp} />
+                                        </button>
+                                        :
+                                        null
+                                    }
                                     {/* <button className="flex items-center">
                                         <span className="pr-1">개인정보 제공 동의</span>
                                         <HelpIcon fontSize='small' />

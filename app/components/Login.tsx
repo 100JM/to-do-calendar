@@ -4,12 +4,11 @@ import { signIn, signOut } from 'next-auth/react';
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
-import useUserStore from '../store/user';
-
-import KakaoLogin from 'react-kakao-login';
 
 import Image from 'next/image'
 import kakaoLoginImg from '../public/images/kakao_login_large_narrow.png';
+import googleLoginImg from '../public/images/google_login.png';
+import mainLogo from '../public/images/main_logo.png';
 import { AnimatePresence, motion } from 'framer-motion';
 
 const Login: React.FC = () => {
@@ -49,12 +48,21 @@ const Login: React.FC = () => {
                             width: "100%",
                             height: "100%",
                         }}>
-                        <div className="w-full h-1/2 flex justify-center items-center">
+                        <div className="w-full h-2/3 flex justify-center items-center">
+                            <Image src={mainLogo} alt='main_logo' priority/>
+                        </div>    
+                        <div className="w-full h-1/3 flex justify-center items-center">
                             <button
-                                className="w-2/3 flex justify-center items-center"
+                                className="w-1/2 h-11 mr-2 flex justify-center items-center relative max-w-60"
                                 onClick={() => signIn('kakao', { callbackUrl: '/calendar' })}
                             >
-                                <Image src={kakaoLoginImg} alt='kakao_login' priority/>
+                                <Image src={kakaoLoginImg} alt='kakao_login' priority fill />
+                            </button>
+                            <button
+                                className="w-1/2 h-11 ml-2 flex justify-center items-center relative max-w-60"
+                                onClick={() => signIn('google', { callbackUrl: '/calendar' })}
+                            >
+                                <Image src={googleLoginImg} alt='google_login' priority fill />
                             </button>
                         </div>
                     </motion.div>

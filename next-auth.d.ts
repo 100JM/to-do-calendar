@@ -5,11 +5,13 @@ declare module "next-auth" {
         accessToken?: string;
         refreshToken?: string;
         userId?: string;
+        provider?: string;
     }
 
     interface JWT {
         accessToken?: string;
         refreshToken?: string;
         userId?: string;
+        provider?: string;
     }
 }

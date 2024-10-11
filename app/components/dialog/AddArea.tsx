@@ -653,7 +653,7 @@ const AddArea: React.FC = () => {
                                         open={showAddrSearch}
                                         onClose={() => handleShowAddrSearch(false)}
                                         anchor={"bottom"}
-                                        style={{ zIndex: "9999" }}
+                                        style={{ zIndex: "9990" }}
                                         sx={{ "& .MuiDrawer-paperAnchorBottom": { maxHeight: "100%" } }}
                                     >
                                         <KakaoAddrSearchForm selectedColor={openColorBar.selectedColor} handleSetKoreaAddr={handleSetKoreaAddr} />
@@ -680,16 +680,14 @@ const AddArea: React.FC = () => {
                                         open={showAddrSearch}
                                         onClose={() => handleShowAddrSearch(false)}
                                         anchor={"bottom"}
-                                        style={{ zIndex: "9999" }}
+                                        style={{ zIndex: "9990" }}
                                         sx={{ "& .MuiDrawer-paperAnchorBottom": { maxHeight: "100%" } }}
                                     >
-                                        {/* <GoogleAddrSearchForm selectedColor={openColorBar.selectedColor} handleSetOverseaAddr={handleSetOverseaAddr} /> */}
                                         <OverseaAddrSearchForm selectedColor={openColorBar.selectedColor} handleSetOverseaAddr={handleSetOverseaAddr} />
                                     </Drawer>
                                 </div>
                                 <div>
                                     <div className="mb-1">{selectedAddrOversea ? selectedAddrOversea : '선택된 위치가 없습니다.'}</div>
-                                    {/* <GoogleMaps mapCenter={{lat: mapCenter.overseasLat, lng: mapCenter.overseasLng}} /> */}
                                     <OverseaMap mapCenter={{ lat: mapCenter.overseasLat, lng: mapCenter.overseasLng }} />
                                 </div>
                             </>

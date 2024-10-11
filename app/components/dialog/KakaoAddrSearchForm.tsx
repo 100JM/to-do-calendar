@@ -2,10 +2,13 @@
 
 import React, { useState, useRef } from 'react';
 import axios from 'axios';
+import useToastStore from '@/app/store/toast';
 
+import AddrSearchSkeleton from './AddrSearchSkeleton';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { IconProp } from '@fortawesome/fontawesome-svg-core'
 import { faMapLocationDot, faLocationDot, faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
+import zIndex from '@mui/material/styles/zIndex';
 
 interface KakaoAddrSearchFormInterface {
     selectedColor: string;
@@ -15,11 +18,22 @@ interface KakaoAddrSearchFormInterface {
 const KakaoAddrSearchForm: React.FC<KakaoAddrSearchFormInterface> = ({ selectedColor, handleSetKoreaAddr }) => {
     const [searchedAddr, setSearchedAddr] = useState<Array<any>>([]);
     const [isSearchEnd, setIsSearchEnd] = useState<boolean>(false);
+    const [isLoading, setIsLoading] = useState<boolean>(false);
     const searchInputRef = useRef<HTMLInputElement | null>(null);
 
+    const { showToast } = useToastStore()
+
     const searchAddr = async () => {
+        const searchKeyword = (searchInputRef.current as HTMLInputElement).value;
+
+        if (!searchKeyword.trim()) {
+            showToast('검색어를 입력해주세요.', { type: 'error' });
+            return;
+        }
+
         setSearchedAddr([]);
         setIsSearchEnd(false);
+        setIsLoading(true);
 
         if (!(searchInputRef.current as HTMLInputElement).value) {
             return;
@@ -28,7 +42,7 @@ const KakaoAddrSearchForm: React.FC<KakaoAddrSearchFormInterface> = ({ selectedC
         try {
             const keywordResponse = await axios.get('https://dapi.kakao.com/v2/local/search/keyword.json', {
                 params: {
-                    query: (searchInputRef.current as HTMLInputElement).value,
+                    query: searchKeyword,
                 },
                 headers: {
                     Authorization: `KakaoAK ${process.env.NEXT_PUBLIC_KAKAO_REST_API_KEY}`,
@@ -36,10 +50,12 @@ const KakaoAddrSearchForm: React.FC<KakaoAddrSearchFormInterface> = ({ selectedC
             });
 
             setSearchedAddr(keywordResponse.data.documents);
-            setIsSearchEnd(keywordResponse.data.meta.is_end);
 
         } catch (error) {
             console.log('Error: ', error);
+        } finally {
+            setIsSearchEnd(true);
+            setIsLoading(false);
         }
     };
 
@@ -69,17 +85,17 @@ const KakaoAddrSearchForm: React.FC<KakaoAddrSearchFormInterface> = ({ selectedC
             </div>
             <div className="w-full my-2 overflow-y-auto" style={{ height: "calc(100% - 3.5rem)" }}>
                 {
-                    searchedAddr.length === 0 && !isSearchEnd &&
+                    searchedAddr.length === 0 && !isSearchEnd && !isLoading &&
                     <div className="w-full h-full flex justify-center items-center">
                         <FontAwesomeIcon icon={faMapLocationDot as IconProp} style={{ color: "rgb(220 223 228)", fontSize: "40px" }} />
                     </div>
                 }
                 {
-                    searchedAddr.length === 0 && isSearchEnd &&
+                    searchedAddr.length === 0 && isSearchEnd && !isLoading &&
                     <div className="w-full h-full flex justify-center items-center">검색 결과가 없습니다.</div>
                 }
                 {
-                    searchedAddr.length > 0 &&
+                    searchedAddr.length > 0 && isSearchEnd && !isLoading &&
                     <ul>
                         {searchedAddr.map((l) => (
                             <li key={l.id} className="p-2 border-b cursor-pointer hover:bg-stone-100" onClick={() => handleSetKoreaAddr(l)}>
@@ -89,6 +105,10 @@ const KakaoAddrSearchForm: React.FC<KakaoAddrSearchFormInterface> = ({ selectedC
                             </li>
                         ))}
                     </ul>
+                }
+                {
+                    isLoading &&
+                    <AddrSearchSkeleton />
                 }
             </div>
         </div>
