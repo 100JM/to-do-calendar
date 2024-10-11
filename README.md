@@ -62,5 +62,9 @@
       <img src="https://img.shields.io/badge/mockapi-000000?style=for-the-badge&logo=mockapi&logoColor=white">
       <span>모의 데이터 흐름을 위한 가상 서버 API (https://mockapi.io/)</span>
     </p>
+    <p>
+      <img src="https://img.shields.io/badge/react hot toast-482307?style=for-the-badge&logo=react hot toast&logoColor=white">
+      <span>토스트 메시지 라이브러리 v2.4.1 (https://react-hot-toast.com/)</span>
+    </p>
   </div>
 </div>
