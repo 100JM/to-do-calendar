@@ -1,13 +1,32 @@
-<div align= "center">
-  <img src="https://capsule-render.vercel.app/api?type=waving&color=0:28079c,100:0537ff&height=120&text=TO-DO-CALENDAR&animation=fadeIn&fontColor=000000&fontSize=40" />
-</div>
 <div style="text-align: left;"> 
   <h2 style="border-bottom: 1px solid #d8dee4; color: #282d33;"> 💻 프로젝트 소개 </h2>  
   <img src="app/public/images/main_logo.png" />
-  <div style="font-weight: 700; font-size: 15px; text-align: left; color: #282d33;"> 일정 기록 TOY 프로젝트 </div> 
+  <div style="font-weight: 700; font-size: 15px; text-align: left; color: #282d33;">- 개인 일정 관리 캘린더 웹 애플리케이션</div> 
+  <div style="font-weight: 700; font-size: 15px; text-align: left; color: #282d33;">- 카카오 & 구글 로그인 지원</div>
+  <div style="font-weight: 700; font-size: 15px; text-align: left; color: #282d33;">- 모바일 최적화</div>
+  <div style="font-weight: 700; font-size: 15px; text-align: left; color: #282d33;">- Next.js</div>
 </div>
 <div style="text-align: left;">
-  <h2 style="border-bottom: 1px solid #d8dee4; color: #282d33;"> 🛠️ Tech Stacks </h2> <br> 
+  <h2 style="border-bottom: 1px solid #d8dee4; color: #282d33;"> 🔍 화면 & 기능 </h2> <br> 
+  <table>
+    <tr>
+      <td align="center" width="33%">
+        <img src="https://github.com/user-attachments/assets/5b5e6a0f-d6ae-41bb-8bcf-c60b8ada4a90" width="100%"><br>
+        <sub><b>메인 화면</b></sub>
+      </td>
+      <td align="center" width="33%">
+        <img src="https://github.com/user-attachments/assets/5b5e6a0f-d6ae-41bb-8bcf-c60b8ada4a90" width="100%"><br>
+        <sub><b>메인 화면</b></sub>
+      </td>
+      <td align="center" width="33%">
+        <img src="https://github.com/user-attachments/assets/5b5e6a0f-d6ae-41bb-8bcf-c60b8ada4a90" width="100%"><br>
+        <sub><b>메인 화면</b></sub>
+      </td>
+    </tr>
+  </table>
+</div>
+<div style="text-align: left;">
+  <h2 style="border-bottom: 1px solid #d8dee4; color: #282d33;"> 🛠️ 기술 스택 </h2> <br> 
   <div style="margin: ; text-align: left;" "text-align: left;"> 
     <p>
       <img src="https://img.shields.io/badge/typescript-3178C6?style=for-the-badge&logo=typescript&logoColor=white">
