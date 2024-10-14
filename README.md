@@ -11,16 +11,16 @@
   <table>
     <tr>
       <td align="center" width="33%">
-        <img src="https://github.com/user-attachments/assets/5b5e6a0f-d6ae-41bb-8bcf-c60b8ada4a90" width="100%"><br>
+        <img src="https://github.com/user-attachments/assets/bb904448-0740-4da5-b364-548c29df34f7" width="100%"><br>
         <sub><b>메인 화면</b></sub>
       </td>
       <td align="center" width="33%">
-        <img src="https://github.com/user-attachments/assets/5b5e6a0f-d6ae-41bb-8bcf-c60b8ada4a90" width="100%"><br>
-        <sub><b>메인 화면</b></sub>
+        <img src="https://github.com/user-attachments/assets/727cc332-35d8-4c48-b90b-4d046f413ba2" width="100%"><br>
+        <sub><b>로그인 후 캘린더 화면</b></sub>
       </td>
       <td align="center" width="33%">
-        <img src="https://github.com/user-attachments/assets/5b5e6a0f-d6ae-41bb-8bcf-c60b8ada4a90" width="100%"><br>
-        <sub><b>메인 화면</b></sub>
+        <img src="https://github.com/user-attachments/assets/84514076-fc63-438e-9bcd-82760e4bbaec" width="100%"><br>
+        <sub><b>사용자 정보 화면</b></sub>
       </td>
     </tr>
   </table>
