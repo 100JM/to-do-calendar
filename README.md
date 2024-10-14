@@ -24,6 +24,14 @@
       </td>
     </tr>
   </table>
+  <table>
+    <tr>
+      <td align="center" width="33%">
+        <img src="https://github.com/user-attachments/assets/e00027f8-9622-4a4d-a0fc-bb954f574cb9" width="100%"><br>
+        <sub><b>신규 일정 등록</b></sub>
+      </td>
+    </tr>
+  </table>
 </div>
 <div style="text-align: left;">
   <h2 style="border-bottom: 1px solid #d8dee4; color: #282d33;"> 🛠️ 기술 스택 </h2> <br> 
