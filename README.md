@@ -2,7 +2,8 @@
   <img src="https://capsule-render.vercel.app/api?type=waving&color=0:28079c,100:0537ff&height=120&text=TO-DO-CALENDAR&animation=fadeIn&fontColor=000000&fontSize=40" />
 </div>
 <div style="text-align: left;"> 
-  <h2 style="border-bottom: 1px solid #d8dee4; color: #282d33;">  TO-DO-CALENDAR🗓️ </h2>  
+  <h2 style="border-bottom: 1px solid #d8dee4; color: #282d33;"> 💻 프로젝트 소개 </h2>  
+  <img src="app/public/images/main_logo.png" />
   <div style="font-weight: 700; font-size: 15px; text-align: left; color: #282d33;"> 일정 기록 TOY 프로젝트 </div> 
 </div>
 <div style="text-align: left;">
