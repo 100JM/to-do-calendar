@@ -30,6 +30,10 @@
         <img src="https://github.com/user-attachments/assets/bf1215ff-14dd-4a7d-af08-575e89907975" width="100%"><br>
         <sub><b>신규 일정 등록</b></sub>
       </td>
+      <td align="center" width="33%">
+        <img src="https://github.com/user-attachments/assets/be13e247-5230-4207-8a7a-fa3c20f3d632" width="100%"><br>
+        <sub><b>일정 수정 & 삭제</b></sub>
+      </td>
     </tr>
   </table>
 </div>
