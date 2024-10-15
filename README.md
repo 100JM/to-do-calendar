@@ -27,7 +27,7 @@
   <table>
     <tr>
       <td align="center" width="33%">
-        <img src="https://github.com/user-attachments/assets/e00027f8-9622-4a4d-a0fc-bb954f574cb9" width="100%"><br>
+        <img src="https://github.com/user-attachments/assets/bf1215ff-14dd-4a7d-af08-575e89907975" width="100%"><br>
         <sub><b>신규 일정 등록</b></sub>
       </td>
     </tr>
