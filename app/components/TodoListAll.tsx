@@ -10,6 +10,7 @@ import Button from '@mui/material/Button';
 import Menu from '@mui/material/Menu';
 import Checkbox from '@mui/material/Checkbox';
 import FormControlLabel from '@mui/material/FormControlLabel';
+import RefreshIcon from '@mui/icons-material/Refresh';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
@@ -155,6 +156,18 @@ const TodoListAll: React.FC = () => {
         }
     };
 
+    const handleRefreshFilter = () => {
+        setFilterDate((prev) => {
+            return {
+                ...prev,
+                startVal: null,
+                endVal: null
+            }
+        });
+
+        setFilter(FILTER_LIST.map(f => f.value));
+    };
+
     const stopLabelEvt = (event: any) => {
         event.preventDefault();
         event.stopPropagation();
@@ -209,8 +222,8 @@ const TodoListAll: React.FC = () => {
                 <span className="absolute left-1/2 transform -translate-x-1/2 text-lg">일정 목록</span>
                 <div className="mr-auto">
                     <Button
-                        id="basic-button"
-                        aria-controls={dateOpen ? 'basic-menu' : undefined}
+                        id="basic-date-button"
+                        aria-controls={dateOpen ? 'basic-date-menu' : undefined}
                         aria-haspopup="true"
                         aria-expanded={dateOpen ? 'true' : undefined}
                         onClick={handleDateClick}
@@ -224,12 +237,12 @@ const TodoListAll: React.FC = () => {
                         기간
                     </Button>
                     <Menu
-                        id="basic-menu"
+                        id="basic-date-menu"
                         anchorEl={dateAnchorEl}
                         open={dateOpen}
                         onClose={handleDateClose}
                         MenuListProps={{
-                            'aria-labelledby': 'basic-button',
+                            'aria-labelledby': 'basic-date-button',
                         }}
                         sx={{
                             "& ul": { padding: "2px" }
@@ -309,6 +322,20 @@ const TodoListAll: React.FC = () => {
                             />
                         </li>
                     </Menu>
+                    <Button
+                        id="basic-refresh-button"
+                        style={{
+                            backgroundColor: "#708090",
+                            color: "#fff",
+                            padding: "2px",
+                            minWidth: "36px",
+                            height: "28.5px",
+                            marginLeft: "4px"
+                        }}
+                        onClick={handleRefreshFilter}
+                    >
+                        <RefreshIcon fontSize='small' />
+                    </Button>
                 </div>
                 <div className="ml-auto">
                     <Button
