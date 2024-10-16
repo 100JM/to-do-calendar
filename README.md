@@ -40,6 +40,22 @@
       </td>
     </tr>
   </table>
+  <table>
+    <tr>
+      <td align="center" width="33%">
+        <img src="https://github.com/user-attachments/assets/d2898b70-8653-4744-96bf-01ba73cebec5" width="100%"><br>
+        <sub><b>중요 일정 목록</b></sub>
+      </td>
+      <td align="center" width="33%">
+        <img src="https://github.com/user-attachments/assets/8f2d1fa7-0df7-460f-bcd1-31390a29a4e2" width="100%"><br>
+        <sub><b>일정 검색</b></sub>
+      </td>
+      <td align="center" width="33%">
+        <img src="https://github.com/user-attachments/assets/7df803e6-6262-448c-b345-f35d6b7c4a67" width="100%"><br>
+        <sub><b>카카오 계정 연결 해제 & 사용자 로그아웃</b></sub>
+      </td>
+    </tr>
+  </table>
 </div>
 <div style="text-align: left;">
   <h2 style="border-bottom: 1px solid #d8dee4; color: #282d33;"> 🛠️ 기술 스택 </h2> <br> 
