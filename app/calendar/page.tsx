@@ -3,6 +3,7 @@ import { Toaster } from "react-hot-toast";
 import Calendar from "../components/Calendar";
 import UserDialog from "../components/UserDialog";
 import TodoDialog from "../components/TodoDialog";
+import LoadingBar from "../components/LoadingBar";
 
 export default function CalendarPage() {
     return (
@@ -11,6 +12,7 @@ export default function CalendarPage() {
             <TodoDialog />
             <Calendar />
             <Toaster position="top-right" />
+            <LoadingBar />
         </div>
     );
 }

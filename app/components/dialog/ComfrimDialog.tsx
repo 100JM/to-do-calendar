@@ -18,7 +18,7 @@ import { IconProp } from '@fortawesome/fontawesome-svg-core';
 const ComfirmDialog: React.FC = () => {
     const { data: session, status } = useSession();
 
-    const { setShowUserDialog, showComfirm, comfirmText, setShowComfirm, setComfirmText, setShowTodoDialog, setIsTodoButton, setShowAddArea } = useModalStore();
+    const { setShowUserDialog, showComfirm, comfirmText, setShowComfirm, setComfirmText, setShowTodoDialog, setIsTodoButton, setShowAddArea, setShowLoadingBar } = useModalStore();
     const { deleteId, setDeletedId, setSelectedDateEventInfoDefault } = useDateStore();
     const { showToast } = useToastStore();
 
@@ -53,10 +53,17 @@ const ComfirmDialog: React.FC = () => {
         }
     }
 
-    const handleLogout = () => {
-        handleCloseComfirmDialog();
-        setShowUserDialog(false);
-        signOut({ callbackUrl: '/' });
+    const handleLogout = async () => {
+        setShowLoadingBar(true);
+
+        try {
+            handleCloseComfirmDialog();
+            setShowUserDialog(false);
+        
+            await signOut({ callbackUrl: '/' });
+        } finally {
+            setShowLoadingBar(false);
+        }
     };
 
     const handleComfirm = () => {

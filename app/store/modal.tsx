@@ -16,6 +16,8 @@ interface ModalStore {
         body: string;
     };
     setComfirmText: (text: any) => void;
+    showLoadingBar: boolean;
+    setShowLoadingBar: (isShow: boolean) => void;
 }
 
 const useModalStore = create<ModalStore>((set) => ({
@@ -34,6 +36,8 @@ const useModalStore = create<ModalStore>((set) => ({
         body: ''
     },
     setComfirmText: (text: any) => set({ comfirmText: text }),
+    showLoadingBar: false,
+    setShowLoadingBar: (isShow: boolean) => set({ showLoadingBar: isShow }),
 }));
 
 export default useModalStore;
