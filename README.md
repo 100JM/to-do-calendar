@@ -34,6 +34,10 @@
         <img src="https://github.com/user-attachments/assets/be13e247-5230-4207-8a7a-fa3c20f3d632" width="100%"><br>
         <sub><b>일정 수정 & 삭제</b></sub>
       </td>
+      <td align="center" width="33%">
+        <img src="https://github.com/user-attachments/assets/5b4f77c6-38e8-4031-a1ae-4c7871bdc9a5" width="100%"><br>
+        <sub><b>일정 목록 조회</b></sub>
+      </td>
     </tr>
   </table>
 </div>
