@@ -2,7 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
-import { useState, useEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 
 import useTodoList from '../hooks/useSWR/useTodoList';
 import useModalStore from '../store/modal';
@@ -17,7 +17,7 @@ import FullCalendar from '@fullcalendar/react';
 import interactionPlugin from "@fullcalendar/interaction";
 import { DateClickArg } from '@fullcalendar/interaction';
 import dayGridPlugin from '@fullcalendar/daygrid';
-import { DatesSetArg, EventApi } from '@fullcalendar/core/index.js';
+import { EventApi } from '@fullcalendar/core/index.js';
 import koLocale from '@fullcalendar/core/locales/ko';
 import { AnimatePresence, motion } from 'framer-motion';
 
@@ -37,18 +37,14 @@ import FormatListBulletedIcon from '@mui/icons-material/FormatListBulleted';
 import SpeedDial from '@mui/material/SpeedDial';
 import SpeedDialIcon from '@mui/material/SpeedDialIcon';
 import SpeedDialAction from '@mui/material/SpeedDialAction';
-import Skeleton from '@mui/material/Skeleton';
 
 const Calendar: React.FC = () => {
     const router = useRouter();
     const { data: session, status } = useSession();
 
-    const { bottomMenu, setBottomMenu, isFadeIn, setIsFadeIn } = useCalendarMenu();
+    const { bottomMenu, setBottomMenu, isFadeIn } = useCalendarMenu();
     const { setShowTodoDialog, setIsTodoButton, setShowAddArea, setShowUserDialog } = useModalStore();
-    const { setClickedDate, setTodayDate, todoList, setTodoList, setSelectedDateEventList } = useDateStore();
-    const { showToast } = useToastStore();
-
-    const [myTodoList, setMyTodoList] = useState<Array<any>>([]);
+    const { setClickedDate, setTodayDate, todoList, setSelectedDateEventList } = useDateStore();
 
     const logOutBtnRef = useRef<HTMLButtonElement | null>(null);
 
@@ -161,7 +157,7 @@ const Calendar: React.FC = () => {
         }
     };
 
-    const { todoData, error, isLoading } = useTodoList(session?.userId);
+    const { isLoading } = useTodoList(session?.userId);
 
     useEffect(() => {
         if (status === 'unauthenticated') {

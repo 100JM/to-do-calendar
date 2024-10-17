@@ -5,7 +5,7 @@ import useModalStore from "../store/modal";
 import dayjs from 'dayjs';
 
 const ImportantTodoList: React.FC = () => {
-    const { data: session, status } = useSession();
+    const { data: session } = useSession();
     const { todoList, setSelectedDateEventInfo } = useDateStore();
     const { setShowAddArea, setIsTodoButton, setShowTodoDialog } = useModalStore();
 

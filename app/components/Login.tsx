@@ -1,6 +1,6 @@
 'use client';
 
-import { signIn, signOut } from 'next-auth/react';
+import { signIn } from 'next-auth/react';
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
@@ -8,12 +8,11 @@ import { useSession } from 'next-auth/react';
 import Image from 'next/image'
 import kakaoLoginImg from '../public/images/kakao_login_large_narrow.png';
 import googleLoginImg from '../public/images/google_login.png';
-import mainLogo from '../public/images/main_logo.png';
 import { AnimatePresence, motion } from 'framer-motion';
 
 const Login: React.FC = () => {
     const router = useRouter();
-    const { data: session, status } = useSession();
+    const { status } = useSession();
 
     const fadeVariants = {
         hidden: { opacity: 0 },
