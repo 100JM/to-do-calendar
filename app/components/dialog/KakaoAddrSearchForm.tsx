@@ -8,7 +8,6 @@ import AddrSearchSkeleton from './AddrSearchSkeleton';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { IconProp } from '@fortawesome/fontawesome-svg-core'
 import { faMapLocationDot, faLocationDot, faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
-import zIndex from '@mui/material/styles/zIndex';
 
 interface KakaoAddrSearchFormInterface {
     selectedColor: string;

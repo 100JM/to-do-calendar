@@ -8,7 +8,6 @@ import useTodoList from '../hooks/useSWR/useTodoList';
 import useModalStore from '../store/modal';
 import useCalendarMenu from '../store/calendarMenu';
 import useDateStore from '../store/date';
-import useToastStore from '../store/toast';
 
 import ImportantTodoList from './ImportantTodoList';
 import TodoListAll from './TodoListAll';

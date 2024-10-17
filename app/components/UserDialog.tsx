@@ -22,11 +22,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
 import { blue } from '@mui/material/colors';
 
-interface ComfirmTextInterface {
-    title: string;
-    body: string;
-}
-
 interface myTodoListCntInterface {
     all: number;
     ongoing: number;
@@ -37,7 +32,7 @@ interface myTodoListCntInterface {
 const defaultDate: string = new Date().toISOString();
 
 const UserDialog: React.FC = () => {
-    const { data: session, status } = useSession();
+    const { data: session } = useSession();
     const { showUserDialog, setShowUserDialog, showComfirm, setShowComfirm, comfirmText, setComfirmText } = useModalStore();
     const { todoList } = useDateStore();
 

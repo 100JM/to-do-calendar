@@ -1,7 +1,5 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
-
 import useModalStore from '../store/modal';
 import useDateStore from '../store/date';
 import DialogContentsDiv from './dialog/DialogContentsDiv';
@@ -9,11 +7,8 @@ import AddArea from './dialog/AddArea';
 import TodoList from './dialog/TodoList';
 import ComfirmDialog from './dialog/ComfrimDialog';
 
-import dayjs, { Dayjs } from 'dayjs';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import { TimePicker } from '@mui/x-date-pickers/TimePicker';
+import dayjs from 'dayjs';
+
 import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
@@ -21,10 +16,10 @@ import 'dayjs/locale/ko';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { IconProp } from '@fortawesome/fontawesome-svg-core'
-import { faClockRotateLeft, faThumbTack, faCircleXmark, faCirclePlus, faTrash, faCircleCheck, faPenToSquare, faMapLocationDot, faMagnifyingGlass, faArrowRotateLeft } from '@fortawesome/free-solid-svg-icons';
+import { faCircleXmark, faCirclePlus } from '@fortawesome/free-solid-svg-icons';
 
 const TodoDialog: React.FC = () => {
-    const { showTodoDialog, setShowTodoDialog, showAddArea, setShowAddArea, isTodoButton, setIsTodoButton, showComfirm, setShowComfirm, setComfirmText } = useModalStore();
+    const { showTodoDialog, setShowTodoDialog, showAddArea, setShowAddArea, setIsTodoButton, showComfirm } = useModalStore();
     const { selectedDate, selectedDateEventList, setSelectedDateEventInfoDefault } = useDateStore();
 
     const handleCloseModal = () => {

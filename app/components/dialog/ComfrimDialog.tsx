@@ -16,7 +16,7 @@ import { IconProp } from '@fortawesome/fontawesome-svg-core';
 
 
 const ComfirmDialog: React.FC = () => {
-    const { data: session, status } = useSession();
+    const { data: session } = useSession();
 
     const { setShowUserDialog, showComfirm, comfirmText, setShowComfirm, setComfirmText, setShowTodoDialog, setIsTodoButton, setShowAddArea, setShowLoadingBar } = useModalStore();
     const { deleteId, setDeletedId, setSelectedDateEventInfoDefault } = useDateStore();
@@ -90,30 +90,6 @@ const ComfirmDialog: React.FC = () => {
                 handleLogout();
             } else {
                 alert('오류 발생: 새로고침 후 다시 시도해주세요.');
-            }
-
-        } catch (error) {
-            console.log(error);
-        }
-    };
-
-    const handleServiceTerms = async () => {
-        const scopesToRevoke: string = 'account_email, profile';
-
-        try {
-            const response = await fetch('https://kapi.kakao.com/v2/user/revoke/service_terms', {
-                method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${accessToken}`,
-                    'Content-Type': 'application/x-www-form-urlencoded'
-                },
-                body: new URLSearchParams({
-                    tags: scopesToRevoke,
-                }),
-            });
-
-            if (response.ok) {
-                console.log(response);
             }
 
         } catch (error) {

@@ -36,7 +36,6 @@ import 'dayjs/locale/ko';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { IconProp } from '@fortawesome/fontawesome-svg-core'
 import { faClockRotateLeft, faThumbTack, faTrash, faCircleCheck, faPenToSquare, faMapLocationDot, faMagnifyingGlass, faArrowRotateLeft } from '@fortawesome/free-solid-svg-icons';
-import { title } from 'process';
 
 const koLocale: string = dayjs.locale('ko');
 
@@ -44,27 +43,6 @@ interface OpenColorBarInterface {
     open: boolean;
     selectedColor: string;
     colorName: string;
-}
-
-interface DateData {
-    id: string;
-    title: string;
-    allDay: boolean;
-    start: string;
-    end: string;
-    color: string;
-    colorName: string;
-    description: string;
-    important: boolean;
-    display: string;
-    koreaLat: number;
-    koreaLng: number;
-    overseasLat: number;
-    overseasLng: number;
-    locationName: string;
-    overseaLocationName: string;
-    isKorea: boolean;
-    user: any;
 }
 
 interface MapCenterInterface {

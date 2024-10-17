@@ -69,7 +69,7 @@ const SearchForm: React.FC = () => {
         }
     };
 
-    const { todoData, error, isLoading } = useTodoList(session?.userId)
+    const { isLoading } = useTodoList(session?.userId)
 
     useEffect(() => {
         if (status === 'unauthenticated') {
@@ -84,7 +84,7 @@ const SearchForm: React.FC = () => {
 
     return (
         <>
-            {status === 'unauthenticated' ?
+            {status === 'unauthenticated' || isLoading === true ?
                 null
                 :
                 <AnimatePresence>

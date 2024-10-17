@@ -1,7 +1,7 @@
 import { useSession } from 'next-auth/react';
 import { useState, useEffect } from 'react';
 import useDateStore from '../store/date';
-import useModalStore from "../store/modal";
+import useModalStore from '../store/modal';
 import dayjs from 'dayjs';
 
 const ImportantTodoList: React.FC = () => {
