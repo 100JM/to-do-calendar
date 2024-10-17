@@ -44,14 +44,9 @@ const Login: React.FC = () => {
                         animate="visible"
                         exit="exit"
                         transition={fadeTransitionSettings}
-                        style={{
-                            width: "100%",
-                            height: "100%",
-                        }}>
-                        <div className="w-full h-2/3 flex justify-center items-center">
-                            <Image src={mainLogo} alt='main_logo' priority/>
-                        </div>    
-                        <div className="w-full h-1/3 flex justify-center items-center">
+                        className="w-full h-1/3"
+                        >
+                        <div className="w-full h-full flex justify-center items-center">
                             <button
                                 className="w-1/2 h-11 mr-2 flex justify-center items-center relative max-w-60"
                                 onClick={() => signIn('kakao', { callbackUrl: '/calendar' })}
