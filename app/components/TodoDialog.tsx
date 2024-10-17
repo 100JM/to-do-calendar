@@ -19,7 +19,7 @@ import { IconProp } from '@fortawesome/fontawesome-svg-core'
 import { faCircleXmark, faCirclePlus } from '@fortawesome/free-solid-svg-icons';
 
 const TodoDialog: React.FC = () => {
-    const { showTodoDialog, setShowTodoDialog, showAddArea, setShowAddArea, setIsTodoButton, showComfirm } = useModalStore();
+    const { showTodoDialog, setShowTodoDialog, showAddArea, setShowAddArea, setIsTodoButton, showComfirm} = useModalStore();
     const { selectedDate, selectedDateEventList, setSelectedDateEventInfoDefault } = useDateStore();
 
     const handleCloseModal = () => {

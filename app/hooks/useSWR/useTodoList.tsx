@@ -16,7 +16,7 @@ const fetcher = async (url: string) => {
     return response.json();
 };
 
-const useTodoList = (userId: string | undefined) => {
+const UseTodoList = (userId: string | undefined) => {
     const { setTodoList } = useDateStore();
 
     const { data, error, isLoading } = useSWR(
@@ -42,4 +42,4 @@ const useTodoList = (userId: string | undefined) => {
     };
 };
 
-export default useTodoList;
+export default UseTodoList;

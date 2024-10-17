@@ -41,11 +41,11 @@ export const metadata: Metadata = {
   },
 };
 
-declare global {
-  interface Window {
-    Kakao: any;
-  }
-}
+// declare global {
+//   interface Window {
+//     Kakao: any;
+//   }
+// }
 
 export default function RootLayout({
   children,

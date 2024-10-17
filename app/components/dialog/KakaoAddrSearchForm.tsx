@@ -11,7 +11,7 @@ import { faMapLocationDot, faLocationDot, faMagnifyingGlass } from '@fortawesome
 
 interface KakaoAddrSearchFormInterface {
     selectedColor: string;
-    handleSetKoreaAddr: (address: any) => void;
+    handleSetKoreaAddr: (y: string, x: string, place_name: string, road_address_name: string, address_name: string) => void;
 }
 
 const KakaoAddrSearchForm: React.FC<KakaoAddrSearchFormInterface> = ({ selectedColor, handleSetKoreaAddr }) => {
@@ -97,7 +97,7 @@ const KakaoAddrSearchForm: React.FC<KakaoAddrSearchFormInterface> = ({ selectedC
                     searchedAddr.length > 0 && isSearchEnd && !isLoading &&
                     <ul>
                         {searchedAddr.map((l) => (
-                            <li key={l.id} className="p-2 border-b cursor-pointer hover:bg-stone-100" onClick={() => handleSetKoreaAddr(l)}>
+                            <li key={l.id} className="p-2 border-b cursor-pointer hover:bg-stone-100" onClick={() => handleSetKoreaAddr(l.y, l.x, l.place_name, l.road_address_name, l.address_name)}>
                                 <p className="text-xs pb-1">{l.address_name}</p>
                                 <p className="text-xs pb-1">{l.road_address_name}</p>
                                 <p className="text-sm"><FontAwesomeIcon icon={faLocationDot as IconProp} style={{ color: selectedColor }} />{` ${l.place_name}`}</p>

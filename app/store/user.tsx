@@ -1,4 +1,3 @@
-import { userInfo } from "os";
 import { create } from "zustand"
 
 interface UserStore {

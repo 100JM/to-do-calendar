@@ -11,7 +11,7 @@ import { faMapLocationDot, faLocationDot, faMagnifyingGlass } from '@fortawesome
 
 interface OverseaAddrSearchFormInterface {
     selectedColor: string;
-    handleSetOverseaAddr: (address: any) => void;
+    handleSetOverseaAddr: (lat: string, lon:string, display_name: string) => void;
 }
 
 const OverseaAddrSearchForm: React.FC<OverseaAddrSearchFormInterface> = ({ selectedColor, handleSetOverseaAddr }) => {
@@ -93,7 +93,7 @@ const OverseaAddrSearchForm: React.FC<OverseaAddrSearchFormInterface> = ({ selec
                     searchedAddr.length > 0 && isSearchEnd && !isLoading &&
                     <ul>
                         {searchedAddr.map((l) => (
-                            <li key={l.place_id} className="p-2 border-b cursor-pointer hover:bg-stone-100" onClick={() => handleSetOverseaAddr(l)}>
+                            <li key={l.place_id} className="p-2 border-b cursor-pointer hover:bg-stone-100" onClick={() => handleSetOverseaAddr(l.lat, l.lon, l.display_name)}>
                                 <p className="text-xs pb-1">{l.display_name}</p>
                                 <p className="text-sm"><FontAwesomeIcon icon={faLocationDot as IconProp} style={{ color: selectedColor }} />{` ${l.name}`}</p>
                             </li>

@@ -5,7 +5,7 @@ interface ToastStore {
     showToast: (msg: string, option:any) => void;
 }
 
-const useToastStore = create<ToastStore>((set) => ({
+const useToastStore = create<ToastStore>(() => ({
     showToast: (msg: string, option:any) => {
         toast(msg, option);
     }

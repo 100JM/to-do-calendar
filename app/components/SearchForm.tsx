@@ -7,7 +7,7 @@ import { useSession } from "next-auth/react";
 import useModalStore from "../store/modal";
 import useCalendarMenu from "../store/calendarMenu";
 import useDateStore from "../store/date";
-import useTodoList from "../hooks/useSWR/useTodoList";
+import UseTodoList from "../hooks/useSWR/useTodoList";
 
 import { AnimatePresence, motion } from 'framer-motion';
 import SearchIcon from '@mui/icons-material/Search';
@@ -69,7 +69,7 @@ const SearchForm: React.FC = () => {
         }
     };
 
-    const { isLoading } = useTodoList(session?.userId)
+    const { isLoading } = UseTodoList(session?.userId)
 
     useEffect(() => {
         if (status === 'unauthenticated') {

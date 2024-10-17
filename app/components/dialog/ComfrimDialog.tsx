@@ -3,7 +3,7 @@ import { useSession } from 'next-auth/react';
 import useModalStore from '@/app/store/modal';
 import useDateStore from '@/app/store/date';
 import useToastStore from '@/app/store/toast';
-import useDeleteTodo from '@/app/hooks/useSWR/useDeleteTodo';
+import UseDeleteTodo from '@/app/hooks/useSWR/useDeleteTodo';
 
 import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
@@ -41,7 +41,7 @@ const ComfirmDialog: React.FC = () => {
     };
 
     const handleDelete = async () => {
-        const result = await useDeleteTodo(deleteId, session?.userId);
+        const result = await UseDeleteTodo(deleteId, session?.userId);
         
         if (result) {
             handleCloseComfirmDialog();

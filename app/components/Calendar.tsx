@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import { useEffect, useRef } from 'react';
 
-import useTodoList from '../hooks/useSWR/useTodoList';
+import UseTodoList from '../hooks/useSWR/useTodoList';
 import useModalStore from '../store/modal';
 import useCalendarMenu from '../store/calendarMenu';
 import useDateStore from '../store/date';
@@ -132,31 +132,7 @@ const Calendar: React.FC = () => {
         setTodayDate();
     };
 
-    // const updateUserBtn = () => {
-    //     logOutBtnRef.current = document.querySelector('.fc-logout-button');
-
-    //     const userImg = (session?.user?.image) ? session.user.image : BasicProfile.src;
-    //     const userName = (session?.user?.name) ? `${session.user?.name} 님` : '';
-
-    //     if (logOutBtnRef.current && bottomMenu === 'calendar') {
-    //         const unsafeHtml = `
-    //             <div class="no-user-img">
-    //                 <img class="default-person-img" src=${userImg} /><span>${userName}</span>
-    //             </div>
-    //         `;
-
-    //         const cleanHtml = sanitizeHtml(unsafeHtml, {
-    //             allowedTags: ['div', 'img', 'span'],
-    //             allowedAttributes: {
-    //                 '*': ['class', 'src', 'alt'],
-    //             },
-    //         });
-
-    //         ((logOutBtnRef.current) as HTMLButtonElement).innerHTML = cleanHtml;
-    //     }
-    // };
-
-    const { isLoading } = useTodoList(session?.userId);
+    const { isLoading } = UseTodoList(session?.userId);
 
     useEffect(() => {
         if (status === 'unauthenticated') {
@@ -165,28 +141,30 @@ const Calendar: React.FC = () => {
 
         const timer = setTimeout(() => {
 
-            logOutBtnRef.current = document.querySelector('.fc-logout-button');
-
-            const userImg = (session?.user?.image) ? session.user.image : BasicProfile.src;
-            const userName = (session?.user?.name) ? `${session.user?.name} 님` : '';
-
-            if (logOutBtnRef.current && bottomMenu === 'calendar') {
-                const unsafeHtml = `
-                <div class="no-user-img">
-                    <img class="default-person-img" src=${userImg} /><span>${userName}</span>
-                </div>
-            `;
-
-                const cleanHtml = sanitizeHtml(unsafeHtml, {
-                    allowedTags: ['div', 'img', 'span'],
-                    allowedAttributes: {
-                        '*': ['class', 'src', 'alt'],
-                    },
-                });
-
-                ((logOutBtnRef.current) as HTMLButtonElement).innerHTML = cleanHtml;
+            if (typeof window !== 'undefined') {
+                logOutBtnRef.current = document.querySelector('.fc-logout-button');
+    
+                const userImg = (session?.user?.image) ? session.user.image : BasicProfile.src;
+                const userName = (session?.user?.name) ? `${session.user?.name} 님` : '';
+    
+                if (logOutBtnRef.current && bottomMenu === 'calendar') {
+                    const unsafeHtml = `
+                    <div class="no-user-img">
+                        <img class="default-person-img" src=${userImg} /><span>${userName}</span>
+                    </div>
+                `;
+    
+                    const cleanHtml = sanitizeHtml(unsafeHtml, {
+                        allowedTags: ['div', 'img', 'span'],
+                        allowedAttributes: {
+                            '*': ['class', 'src', 'alt'],
+                        },
+                    });
+    
+                    ((logOutBtnRef.current) as HTMLButtonElement).innerHTML = cleanHtml;
+                }
             }
-            
+
         }, 0); // Fullcalendar의 커스텀버튼 렌더링 시점이 맞는 않는것으로 의심되어 bottomMenu가 변경되었을 시 제대로 반영되지 않아 setTimeout을 걸었음
 
         return () => {
@@ -270,7 +248,7 @@ const Calendar: React.FC = () => {
                                 icon={
                                     <Badge
                                         badgeContent={
-                                            todoList.filter((t) => t.important).filter((i: any) => {
+                                            todoList.filter((t) => t.important).filter((i) => {
                                                 const importantEndDate: string = i.allDay ? dayjs(i.end).add(-1, 'day').format('YYYY-MM-DD') : i.end.split('T')[0];
                                                 const importantEndDday: number = dayjs(importantEndDate).startOf('day').diff(dayjs().startOf('day'), 'day');
 
@@ -318,7 +296,7 @@ const Calendar: React.FC = () => {
                                     icon={
                                         <Badge
                                             badgeContent={
-                                                todoList.filter((t) => t.important).filter((i: any) => {
+                                                todoList.filter((t) => t.important).filter((i) => {
                                                     const importantEndDate: string = i.allDay ? dayjs(i.end).add(-1, 'day').format('YYYY-MM-DD') : i.end.split('T')[0];
                                                     const importantEndDday: number = dayjs(importantEndDate).startOf('day').diff(dayjs().startOf('day'), 'day');
 

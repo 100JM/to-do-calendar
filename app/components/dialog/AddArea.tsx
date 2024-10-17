@@ -8,7 +8,7 @@ import useModalStore from '@/app/store/modal';
 import useCalendarMenu from '@/app/store/calendarMenu';
 import useDateStore from '@/app/store/date';
 import useToastStore from '@/app/store/toast';
-import { useAddTodo, useUpdateTodo } from '@/app/hooks/useSWR/useAddTodo';
+import { UseAddTodo, UseUpdateTodo } from '@/app/hooks/useSWR/useAddTodo';
 
 import DialogContentsDiv from './DialogContentsDiv';
 import DialogUiColor from './DialogUiColor';
@@ -53,7 +53,7 @@ interface MapCenterInterface {
 }
 
 interface ToDoValueRefs {
-    [key: string]: HTMLElement | null;
+    [key: string]: HTMLElement | HTMLInputElement | null;
 }
 
 const AddArea: React.FC = () => {
@@ -78,8 +78,8 @@ const AddArea: React.FC = () => {
         selectedColor: '#3788d8',
         colorName: '워터 블루'
     });
-    const [selectedAddr, setSelectedAddr] = useState<any>('');
-    const [selectedAddrOversea, setSelectedAddrOversea] = useState<any>('');
+    const [selectedAddr, setSelectedAddr] = useState<string>('');
+    const [selectedAddrOversea, setSelectedAddrOversea] = useState<string>('');
     const [mapCenter, setMapCenter] = useState<MapCenterInterface>({
         koreaLat: 37.5665,
         koreaLng: 126.9780,
@@ -104,32 +104,32 @@ const AddArea: React.FC = () => {
         setShowAddrSearch(isShow);
     };
 
-    const handleSetOverseaAddr = (address: any) => {
+    const handleSetOverseaAddr = (lat: string, lon:string, display_name: string) => {
         setMapCenter((prev) => {
             return {
                 ...prev,
-                overseasLat: Number(address.lat),
-                overseasLng: Number(address.lon)
+                overseasLat: Number(lat),
+                overseasLng: Number(lon)
             }
         });
 
-        setSelectedAddrOversea(address.display_name);
+        setSelectedAddrOversea(display_name);
         handleShowAddrSearch(false);
     };
 
-    const handleSetKoreaAddr = (address: any) => {
+    const handleSetKoreaAddr = (y: string, x: string, place_name: string, road_address_name: string, address_name: string) => {
         setMapCenter((prev) => {
             return {
                 ...prev,
-                koreaLat: address.y,
-                koreaLng: address.x
+                koreaLat: Number(y),
+                koreaLng: Number(x)
             }
         });
 
-        if (address.road_address_name) {
-            setSelectedAddr(`${address.place_name}, ${address.road_address_name}`);
+        if (road_address_name) {
+            setSelectedAddr(`${place_name}, ${road_address_name}`);
         } else {
-            setSelectedAddr(`${address.place_name}, ${address.address_name}`);
+            setSelectedAddr(`${place_name}, ${address_name}`);
         }
 
         handleShowAddrSearch(false);
@@ -282,7 +282,7 @@ const AddArea: React.FC = () => {
             user: session?.userId
         };
 
-        const addResult = await useAddTodo(newToDo, session?.userId);
+        const addResult = await UseAddTodo(newToDo, session?.userId);
         
         if (addResult) {
             handleCloseModal();
@@ -339,7 +339,7 @@ const AddArea: React.FC = () => {
             user: session?.userId
         };
 
-        const updateReuslt = await useUpdateTodo(updatedToDo, session?.userId, id);
+        const updateReuslt = await UseUpdateTodo(updatedToDo, session?.userId, id);
 
         if (updateReuslt) {
             handleCloseModal();

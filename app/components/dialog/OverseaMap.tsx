@@ -29,17 +29,17 @@ const OverseaMap: React.FC<OverseaMapInterface> = ({ mapCenter }) => {
 
     useEffect(() => {
         setIsMounted(true);
-
-        // Leaflet 관련 설정
-        if (typeof window !== 'undefined') {
-            const L = require('leaflet');
-            delete L.Icon.Default.prototype._getIconUrl;
-            L.Icon.Default.mergeOptions({
+        const loadLeaflet = async () => {
+            const leafletModule = await import('leaflet');
+            
+            // Leaflet 관련 설정
+            leafletModule.Icon.Default.mergeOptions({
                 iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
                 iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
                 shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
             });
-        }
+        };
+        loadLeaflet();
     }, []);
 
     if (!isMounted) return null;

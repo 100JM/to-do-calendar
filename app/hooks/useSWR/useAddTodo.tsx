@@ -1,6 +1,6 @@
 import { mutate } from 'swr';
 
-export const useAddTodo = async (info: any, userId: string | undefined) => {
+export const UseAddTodo = async (info: any, userId: string | undefined) => {
     const url = `${process.env.NEXT_PUBLIC_MOCKAPI}?user=${userId}`;
 
     try {
@@ -24,7 +24,7 @@ export const useAddTodo = async (info: any, userId: string | undefined) => {
     }
 };
 
-export const useUpdateTodo = async (info: any, userId: string | undefined, id: string) => {
+export const UseUpdateTodo = async (info: any, userId: string | undefined, id: string) => {
     const url = process.env.NEXT_PUBLIC_MOCKAPI;
 
     try {
