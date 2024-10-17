@@ -132,29 +132,29 @@ const Calendar: React.FC = () => {
         setTodayDate();
     };
 
-    const updateUserBtn = () => {
-        logOutBtnRef.current = document.querySelector('.fc-logout-button');
+    // const updateUserBtn = () => {
+    //     logOutBtnRef.current = document.querySelector('.fc-logout-button');
 
-        const userImg = (session?.user?.image) ? session.user.image : BasicProfile.src;
-        const userName = (session?.user?.name) ? `${session.user?.name} 님` : '';
+    //     const userImg = (session?.user?.image) ? session.user.image : BasicProfile.src;
+    //     const userName = (session?.user?.name) ? `${session.user?.name} 님` : '';
 
-        if (logOutBtnRef.current && bottomMenu === 'calendar') {
-            const unsafeHtml = `
-                <div class="no-user-img">
-                    <img class="default-person-img" src=${userImg} /><span>${userName}</span>
-                </div>
-            `;
+    //     if (logOutBtnRef.current && bottomMenu === 'calendar') {
+    //         const unsafeHtml = `
+    //             <div class="no-user-img">
+    //                 <img class="default-person-img" src=${userImg} /><span>${userName}</span>
+    //             </div>
+    //         `;
 
-            const cleanHtml = sanitizeHtml(unsafeHtml, {
-                allowedTags: ['div', 'img', 'span'],
-                allowedAttributes: {
-                    '*': ['class', 'src', 'alt'],
-                },
-            });
+    //         const cleanHtml = sanitizeHtml(unsafeHtml, {
+    //             allowedTags: ['div', 'img', 'span'],
+    //             allowedAttributes: {
+    //                 '*': ['class', 'src', 'alt'],
+    //             },
+    //         });
 
-            ((logOutBtnRef.current) as HTMLButtonElement).innerHTML = cleanHtml;
-        }
-    };
+    //         ((logOutBtnRef.current) as HTMLButtonElement).innerHTML = cleanHtml;
+    //     }
+    // };
 
     const { isLoading } = useTodoList(session?.userId);
 
@@ -164,7 +164,29 @@ const Calendar: React.FC = () => {
         }
 
         const timer = setTimeout(() => {
-            updateUserBtn();
+
+            logOutBtnRef.current = document.querySelector('.fc-logout-button');
+
+            const userImg = (session?.user?.image) ? session.user.image : BasicProfile.src;
+            const userName = (session?.user?.name) ? `${session.user?.name} 님` : '';
+
+            if (logOutBtnRef.current && bottomMenu === 'calendar') {
+                const unsafeHtml = `
+                <div class="no-user-img">
+                    <img class="default-person-img" src=${userImg} /><span>${userName}</span>
+                </div>
+            `;
+
+                const cleanHtml = sanitizeHtml(unsafeHtml, {
+                    allowedTags: ['div', 'img', 'span'],
+                    allowedAttributes: {
+                        '*': ['class', 'src', 'alt'],
+                    },
+                });
+
+                ((logOutBtnRef.current) as HTMLButtonElement).innerHTML = cleanHtml;
+            }
+            
         }, 0); // Fullcalendar의 커스텀버튼 렌더링 시점이 맞는 않는것으로 의심되어 bottomMenu가 변경되었을 시 제대로 반영되지 않아 setTimeout을 걸었음
 
         return () => {
@@ -174,7 +196,7 @@ const Calendar: React.FC = () => {
             }
         };
 
-    }, [router, status, updateUserBtn, session, bottomMenu, isLoading]);
+    }, [router, status, session, bottomMenu, isLoading]);
 
     return (
         <>
@@ -299,7 +321,7 @@ const Calendar: React.FC = () => {
                                                 todoList.filter((t) => t.important).filter((i: any) => {
                                                     const importantEndDate: string = i.allDay ? dayjs(i.end).add(-1, 'day').format('YYYY-MM-DD') : i.end.split('T')[0];
                                                     const importantEndDday: number = dayjs(importantEndDate).startOf('day').diff(dayjs().startOf('day'), 'day');
-    
+
                                                     return (
                                                         importantEndDday >= 0 && importantEndDday <= 3
                                                     );

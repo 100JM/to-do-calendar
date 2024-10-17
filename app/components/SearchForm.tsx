@@ -79,8 +79,25 @@ const SearchForm: React.FC = () => {
     }, [session, router, status]);
 
     useEffect(() => {
-        handleSearchTodo((searchInputRef.current?.value !== undefined) ? searchInputRef.current?.value : '');
-    }, [todoList, handleSearchTodo]);
+        const value = (searchInputRef.current?.value !== undefined) ? searchInputRef.current?.value : '';
+
+        if (searchInputRef.current) {
+            const keyword = value.replace(/\s/g, '').toLowerCase();
+
+            if (keyword) {
+                const searchedData = todoList.filter((todo) => {
+                    if (todo.title?.replace(/\s/g, '').toLowerCase().includes(keyword) || todo.description?.replace(/\s/g, '').toLowerCase().includes(keyword)) {
+                        return todo;
+                    }
+                }).sort((a, b) => a.title.toLowerCase().localeCompare(b.title.toLowerCase()));
+
+                setSearchedmyTodoList(searchedData);
+            } else {
+                setSearchedmyTodoList([]);
+            }
+        }
+
+    }, [todoList]);
 
     return (
         <>
