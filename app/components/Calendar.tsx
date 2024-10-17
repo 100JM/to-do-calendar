@@ -174,7 +174,7 @@ const Calendar: React.FC = () => {
             }
         };
 
-    }, [session, bottomMenu, isLoading]);
+    }, [router, status, updateUserBtn, session, bottomMenu, isLoading]);
 
     return (
         <>

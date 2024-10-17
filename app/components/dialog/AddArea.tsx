@@ -60,7 +60,7 @@ const AddArea: React.FC = () => {
     const { data: session } = useSession();
     const { bottomMenu } = useCalendarMenu();
     const { isTodoButton, setShowAddArea, setShowTodoDialog, setIsTodoButton, setShowComfirm, setComfirmText } = useModalStore();
-    const { selectedDate, setSelectedDateEventInfoDefault, setDeletedId, deleteId } = useDateStore();
+    const { selectedDate, setSelectedDateEventInfoDefault, setDeletedId } = useDateStore();
     const { showToast } = useToastStore();
 
     const defaultStartDateTime = dayjs().set('hour', 9).set('minute', 0).startOf('minute').format('HH:mm');

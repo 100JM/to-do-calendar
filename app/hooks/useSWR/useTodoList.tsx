@@ -23,7 +23,7 @@ const useTodoList = (userId: string | undefined) => {
         userId ? `${process.env.NEXT_PUBLIC_MOCKAPI}?user=${userId}` : null, 
         fetcher,
         {
-            onErrorRetry(error, key, config, revalidate, revalidateOpts) {
+            onErrorRetry(error) {
                 if (error.status === 404) return
             },
         }

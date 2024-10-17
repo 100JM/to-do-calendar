@@ -13,7 +13,6 @@ import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
 import Avatar from '@mui/material/Avatar';
-import HelpIcon from '@mui/icons-material/Help';
 import LogoutIcon from '@mui/icons-material/Logout';
 import CloseIcon from '@mui/icons-material/Close';
 import PersonIcon from '@mui/icons-material/Person';
@@ -33,7 +32,7 @@ const defaultDate: string = new Date().toISOString();
 
 const UserDialog: React.FC = () => {
     const { data: session } = useSession();
-    const { showUserDialog, setShowUserDialog, showComfirm, setShowComfirm, comfirmText, setComfirmText } = useModalStore();
+    const { showUserDialog, setShowUserDialog, showComfirm, setShowComfirm, setComfirmText } = useModalStore();
     const { todoList } = useDateStore();
 
     const [myTodoListCnt, setMyTodoListCnt] = useState<myTodoListCntInterface>({

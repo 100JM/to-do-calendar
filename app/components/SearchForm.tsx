@@ -76,11 +76,11 @@ const SearchForm: React.FC = () => {
             router.replace('/');
         }
 
-    }, [session, router]);
+    }, [session, router, status]);
 
     useEffect(() => {
         handleSearchTodo((searchInputRef.current?.value !== undefined) ? searchInputRef.current?.value : '');
-    }, [todoList]);
+    }, [todoList, handleSearchTodo]);
 
     return (
         <>

@@ -44,7 +44,7 @@ const FILTER_LIST: FilterListInterface[] = [
 const koLocale: string = dayjs.locale('ko');
 
 const TodoListAll: React.FC = () => {
-    const { data: session, status } = useSession();
+    const { data: session } = useSession();
     const { todoList, setSelectedDateEventInfo } = useDateStore();
     const { setShowAddArea, setIsTodoButton, setShowTodoDialog } = useModalStore();
     const { showToast } = useToastStore();
