@@ -53,7 +53,48 @@ interface MapCenterInterface {
 }
 
 interface ToDoValueRefs {
-    [key: string]: HTMLElement | HTMLInputElement | null;
+    [key: string]: HTMLElement | null;
+}
+
+interface TodoInterface {
+    title: string;
+    allDay: boolean;
+    start: string;
+    end: string;
+    color: string;
+    colorName: string;
+    description: string;
+    important: boolean;
+    display: string;
+    koreaLat: number;
+    koreaLng: number;
+    overseasLat: number;
+    overseasLng: number;
+    locationName: string;
+    overseaLocationName: string;
+    isKorea: boolean;
+    user: string;
+}
+
+interface UpdatedTodoInterface {
+    id: string;
+    title: string;
+    allDay: boolean;
+    start: string;
+    end: string;
+    color: string;
+    colorName: string;
+    description: string;
+    important: boolean;
+    display: string;
+    koreaLat: number;
+    koreaLng: number;
+    overseasLat: number;
+    overseasLng: number;
+    locationName: string;
+    overseaLocationName: string;
+    isKorea: boolean;
+    user: string;
 }
 
 const AddArea: React.FC = () => {
@@ -91,7 +132,10 @@ const AddArea: React.FC = () => {
 
     const dateRef = useRef<HTMLDivElement | null>(null);
     const timeRef = useRef<HTMLDivElement | null>(null);
+
     const toDoValueRef = useRef<ToDoValueRefs>({});
+    const startDayRef = useRef<HTMLInputElement | null>(null);
+    const endDayRef = useRef<HTMLInputElement | null>(null);
 
     const handleCloseModal = () => {
         setShowTodoDialog(false);
@@ -183,8 +227,8 @@ const AddArea: React.FC = () => {
             })
         }
 
-        const start = dayjs(`${((toDoValueRef.current.start) as HTMLInputElement).value}T${dayjs(date as Dayjs).format('HH:mm')}`);
-        const end = dayjs(`${((toDoValueRef.current.end) as HTMLInputElement).value}T${selectedTime.endTime}`);
+        const start = dayjs(`${startDayRef.current?.value}T${dayjs(date as Dayjs).format('HH:mm')}`);
+        const end = dayjs(`${endDayRef.current?.value}T${selectedTime.endTime}`);
 
         if (start > end) {
             setDateValueCheck(false);
@@ -203,8 +247,8 @@ const AddArea: React.FC = () => {
             })
         }
 
-        const start = dayjs(`${((toDoValueRef.current.start) as HTMLInputElement).value}T${selectedTime.startTime}`);
-        const end = dayjs(`${((toDoValueRef.current.end) as HTMLInputElement).value}T${dayjs(date as Dayjs).format('HH:mm')}`);
+        const start = dayjs(`${startDayRef.current?.value}T${selectedTime.startTime}`);
+        const end = dayjs(`${endDayRef.current?.value}T${dayjs(date as Dayjs).format('HH:mm')}`);
 
         if (start > end) {
             setDateValueCheck(false);
@@ -215,9 +259,9 @@ const AddArea: React.FC = () => {
 
     const handleStartDate = (date: Dayjs | null) => {
         const start = isAllday ? dayjs(date).format('YYYY-MM-DD')  : dayjs(`${dayjs(date).format('YYYY-MM-DD')}T${selectedTime.startTime}`);
-        const end = isAllday ? ((toDoValueRef.current.end) as HTMLInputElement).value : dayjs(`${((toDoValueRef.current.end) as HTMLInputElement).value}T${selectedTime.endTime}`);
+        const end = isAllday ? endDayRef.current?.value : dayjs(`${endDayRef.current?.value}T${selectedTime.endTime}`);
 
-        if (start > end) {
+        if (end && start > end) {
             setDateValueCheck(false);
         } else {
             setDateValueCheck(true);
@@ -226,9 +270,9 @@ const AddArea: React.FC = () => {
 
     const handleEndDate = (date: Dayjs | null) => {
         const end = isAllday ? dayjs(date).format('YYYY-MM-DD')  : dayjs(`${dayjs(date).format('YYYY-MM-DD')}T${selectedTime.endTime}`);
-        const start = isAllday ? ((toDoValueRef.current.start) as HTMLInputElement).value : dayjs(`${((toDoValueRef.current.start) as HTMLInputElement).value}T${selectedTime.startTime}`);
+        const start = isAllday ? startDayRef.current?.value : dayjs(`${startDayRef.current?.value}T${selectedTime.startTime}`);
 
-        if (start > end) {
+        if (start && start > end) {
             setDateValueCheck(false);
         } else {
             setDateValueCheck(true);
@@ -251,21 +295,21 @@ const AddArea: React.FC = () => {
             return;
         }
 
-        let selectStartDateValue: string;
-        let selectEndDateValue: string;
+        let selectStartDateValue: string | undefined;
+        let selectEndDateValue: string | undefined;
 
         if (isAllday) {
-            selectStartDateValue = (toDoValueRef.current.start as HTMLInputElement).value;
-            selectEndDateValue = dayjs(dayjs((toDoValueRef.current.end as HTMLInputElement).value).add(1, 'day')).format('YYYY-MM-DD');
+            selectStartDateValue = startDayRef.current?.value;
+            selectEndDateValue = dayjs(dayjs(endDayRef.current?.value).add(1, 'day')).format('YYYY-MM-DD');
         } else {
-            selectStartDateValue = `${(toDoValueRef.current.start as HTMLInputElement).value}T${selectedTime.startTime}`;
-            selectEndDateValue = `${(toDoValueRef.current.end as HTMLInputElement).value}T${selectedTime.endTime}`;
+            selectStartDateValue = `${startDayRef.current?.value}T${selectedTime.startTime}`;
+            selectEndDateValue = `${endDayRef.current?.value}T${selectedTime.endTime}`;
         }
 
-        const newToDo: object = {
+        const newToDo: TodoInterface = {
             title: (toDoValueRef.current.title as HTMLInputElement).value,
             allDay: (toDoValueRef.current.allDay as HTMLInputElement).checked,
-            start: selectStartDateValue,
+            start: selectStartDateValue ? selectStartDateValue : '',
             end: selectEndDateValue,
             color: openColorBar.selectedColor,
             colorName: openColorBar.colorName,
@@ -279,7 +323,7 @@ const AddArea: React.FC = () => {
             locationName: (isKorea ? selectedAddr : ''),
             overseaLocationName: (isKorea ? '' : selectedAddrOversea),
             isKorea: isKorea,
-            user: session?.userId
+            user: session?.userId ? session?.userId : ''
         };
 
         const addResult = await UseAddTodo(newToDo, session?.userId);
@@ -308,21 +352,21 @@ const AddArea: React.FC = () => {
             return;
         }
 
-        let selectStartDateValue: string;
-        let selectEndDateValue: string;
+        let selectStartDateValue: string | undefined;
+        let selectEndDateValue: string | undefined;
 
         if (isAllday) {
-            selectStartDateValue = (toDoValueRef.current.start as HTMLInputElement).value;
-            selectEndDateValue = dayjs(dayjs((toDoValueRef.current.end as HTMLInputElement).value).add(1, 'day')).format('YYYY-MM-DD');
+            selectStartDateValue = startDayRef.current?.value;
+            selectEndDateValue = dayjs(dayjs(endDayRef.current?.value).add(1, 'day')).format('YYYY-MM-DD');
         } else {
-            selectStartDateValue = `${(toDoValueRef.current.start as HTMLInputElement).value}T${selectedTime.startTime}`;
-            selectEndDateValue = `${(toDoValueRef.current.end as HTMLInputElement).value}T${selectedTime.endTime}`;
+            selectStartDateValue = `${startDayRef.current?.value}T${selectedTime.startTime}`;
+            selectEndDateValue = `${endDayRef.current?.value}T${selectedTime.endTime}`;
         }
 
-        const updatedToDo: object = {
+        const updatedToDo: UpdatedTodoInterface = {
             title: (toDoValueRef.current.title as HTMLInputElement).value,
             allDay: (toDoValueRef.current.allDay as HTMLInputElement).checked,
-            start: selectStartDateValue,
+            start: selectStartDateValue ? selectStartDateValue : '',
             end: selectEndDateValue,
             color: openColorBar.selectedColor,
             colorName: openColorBar.colorName,
@@ -336,7 +380,8 @@ const AddArea: React.FC = () => {
             locationName: (isKorea ? selectedAddr : ''),
             overseaLocationName: (isKorea ? '' : selectedAddrOversea),
             isKorea: isKorea,
-            user: session?.userId
+            user: session?.userId ? session?.userId : '',
+            id: id
         };
 
         const updateReuslt = await UseUpdateTodo(updatedToDo, session?.userId, id);
@@ -477,7 +522,7 @@ const AddArea: React.FC = () => {
                                             },
                                             "& fieldset": { borderColor: openColorBar.selectedColor }
                                         }}
-                                        inputRef={(e: any) => toDoValueRef.current['start'] = e}
+                                        inputRef={startDayRef}
                                         localeText={{
                                             toolbarTitle: '날짜 선택',
                                             cancelButtonLabel: '취소',
@@ -531,7 +576,7 @@ const AddArea: React.FC = () => {
                                             },
                                             "& fieldset": { borderColor: openColorBar.selectedColor }
                                         }}
-                                        inputRef={(e: any) => toDoValueRef.current['end'] = e}
+                                        inputRef={endDayRef}
                                         localeText={{
                                             toolbarTitle: '날짜 선택',
                                             cancelButtonLabel: '취소',

@@ -11,11 +11,42 @@ import { faMapLocationDot, faLocationDot, faMagnifyingGlass } from '@fortawesome
 
 interface OverseaAddrSearchFormInterface {
     selectedColor: string;
-    handleSetOverseaAddr: (lat: string, lon:string, display_name: string) => void;
+    handleSetOverseaAddr: (lat: string, lon: string, display_name: string) => void;
+}
+
+interface NominatimAddress {
+    ISO3166_2_lvl4?: string;
+    amenity?: string;
+    borough?: string;
+    city?: string;
+    country?: string;
+    country_code?: string;
+    house_number?: string;
+    postcode?: string;
+    road?: string;
+    suburb?: string;
+}
+
+interface OverseaSearchedAddrInterface {
+    address: NominatimAddress
+    addresstype: string
+    boundingbox: string[]
+    class: string
+    display_name: string
+    importance: number
+    lat: string
+    licence: string
+    lon: string
+    name: string
+    osm_id: number
+    osm_type: string
+    place_id: number
+    place_rank: number
+    type: string
 }
 
 const OverseaAddrSearchForm: React.FC<OverseaAddrSearchFormInterface> = ({ selectedColor, handleSetOverseaAddr }) => {
-    const [searchedAddr, setSearchedAddr] = useState<Array<any>>([]);
+    const [searchedAddr, setSearchedAddr] = useState<Array<OverseaSearchedAddrInterface>>([]);
     const [isSearchEnd, setIsSearchEnd] = useState<boolean>(false);
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const searchInputRef = useRef<HTMLInputElement | null>(null);
@@ -54,8 +85,8 @@ const OverseaAddrSearchForm: React.FC<OverseaAddrSearchFormInterface> = ({ selec
         }
     };
 
-    const handleOnEnter = (key: any) => {
-        if (key.key === 'Enter' || key.keyCode === 13) {
+    const handleOnEnter = (key: React.KeyboardEvent<HTMLInputElement>) => {
+        if (key.key === 'Enter' || key.code === 'Enter') {
             nominatimAddrSearch();
         }
     };

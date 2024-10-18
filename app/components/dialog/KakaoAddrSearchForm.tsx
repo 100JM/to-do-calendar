@@ -14,8 +14,23 @@ interface KakaoAddrSearchFormInterface {
     handleSetKoreaAddr: (y: string, x: string, place_name: string, road_address_name: string, address_name: string) => void;
 }
 
+interface KaKaoSearchedAddrInterface {
+    address_name: string;
+    category_group_code: string;
+    category_group_name: string;
+    category_name: string;
+    distance: string;
+    id: string;
+    phone: string;
+    place_name: string;
+    place_url: string;
+    road_address_name: string;
+    x: string;
+    y: string;
+}
+
 const KakaoAddrSearchForm: React.FC<KakaoAddrSearchFormInterface> = ({ selectedColor, handleSetKoreaAddr }) => {
-    const [searchedAddr, setSearchedAddr] = useState<Array<any>>([]);
+    const [searchedAddr, setSearchedAddr] = useState<Array<KaKaoSearchedAddrInterface>>([]);
     const [isSearchEnd, setIsSearchEnd] = useState<boolean>(false);
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const searchInputRef = useRef<HTMLInputElement | null>(null);
@@ -58,8 +73,8 @@ const KakaoAddrSearchForm: React.FC<KakaoAddrSearchFormInterface> = ({ selectedC
         }
     };
 
-    const handleOnEnter = (key: any) => {
-        if (key.key === 'Enter' || key.keyCode === 13) {
+    const handleOnEnter = (key: React.KeyboardEvent<HTMLInputElement>) => {
+        if (key.key === 'Enter' || key.code === 'Enter') {
             searchAddr();
         }
     };

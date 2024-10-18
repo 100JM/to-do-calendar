@@ -1,35 +1,46 @@
 import { create } from "zustand";
 
+interface TodoInterface {
+    id: string;
+    title: string;
+    allDay: boolean;
+    start: string;
+    end: string;
+    color: string;
+    colorName: string;
+    description: string;
+    important: boolean;
+    display: string;
+    koreaLat: number;
+    koreaLng: number;
+    overseasLat: number;
+    overseasLng: number;
+    locationName: string;
+    overseaLocationName: string;
+    isKorea: boolean;
+    user: string;
+}
+
+interface selectedTodoInterface {
+    id: string;
+    allDay: boolean;
+    startStr: string;
+    endStr:string;
+    title: string;
+    backgroundColor: string;
+}
+
 interface DateStore {
     clickedDate: string;
     setClickedDate: (date: string) => void;
     setSelectedDateEventInfo: (id: string) => void;
     setSelectedDateEventInfoDefault: () => void;
-    selectedDate: {
-        id: string;
-        title: string;
-        allDay: boolean;
-        start: string;
-        end: string;
-        color: string;
-        colorName: string;
-        description: string;
-        important: boolean;
-        display: string;
-        koreaLat: number;
-        koreaLng: number;
-        overseasLat: number;
-        overseasLng: number;
-        locationName: string;
-        overseaLocationName: string;
-        isKorea: boolean;
-        user: any;
-    };
+    selectedDate: TodoInterface;
     setTodayDate: () => void;
-    todoList: Array<any>;
-    setTodoList: (list: Array<any>) => void;
-    selectedDateEventList: Array<any>;
-    setSelectedDateEventList: (list: Array<any>) => void;
+    todoList: Array<TodoInterface>;
+    setTodoList: (list: Array<TodoInterface>) => void;
+    selectedDateEventList: Array<selectedTodoInterface>;
+    setSelectedDateEventList: (list: Array<selectedTodoInterface>) => void;
     deleteId: string;
     setDeletedId: (id: string) => void;
 }
@@ -59,7 +70,7 @@ const useDateStore = create<DateStore>((set) => ({
                 locationName: '',
                 overseaLocationName: '',
                 isKorea: true,
-                user: 0,
+                user: '',
             },
         })),
     setSelectedDateEventInfo: (id: string) => set((state) => ({
@@ -86,7 +97,7 @@ const useDateStore = create<DateStore>((set) => ({
             locationName: '',
             overseaLocationName: '',
             isKorea: true,
-            user: 0,
+            user: '',
         }
     })),
     selectedDate: {
@@ -107,7 +118,7 @@ const useDateStore = create<DateStore>((set) => ({
         locationName: '',
         overseaLocationName: '',
         isKorea: true,
-        user: 0,
+        user: '',
     },
     setTodayDate: () =>
         set((state) => ({
@@ -118,9 +129,9 @@ const useDateStore = create<DateStore>((set) => ({
             },
         })),
     todoList: [],
-    setTodoList: (list: Array<any>) => set({todoList: list}),
+    setTodoList: (list: Array<TodoInterface>) => set({ todoList: list }),
     selectedDateEventList: [],
-    setSelectedDateEventList: (list: Array<any>) => set({ selectedDateEventList: list }),
+    setSelectedDateEventList: (list: Array<selectedTodoInterface>) => set({ selectedDateEventList: list }),
     deleteId: '',
     setDeletedId: (id: string) => set({ deleteId: id }),
 }));

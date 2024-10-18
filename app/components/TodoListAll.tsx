@@ -41,6 +41,27 @@ const FILTER_LIST: FilterListInterface[] = [
     },
 ];
 
+interface TodoListInterface {
+    id: string;
+    title: string;
+    allDay: boolean;
+    start: string;
+    end: string;
+    color: string;
+    colorName: string;
+    description: string;
+    important: boolean;
+    display: string;
+    koreaLat: number;
+    koreaLng: number;
+    overseasLat: number;
+    overseasLng: number;
+    locationName: string;
+    overseaLocationName: string;
+    isKorea: boolean;
+    user: string;
+}
+
 const koLocale: string = dayjs.locale('ko');
 
 const TodoListAll: React.FC = () => {
@@ -49,10 +70,10 @@ const TodoListAll: React.FC = () => {
     const { setShowAddArea, setIsTodoButton, setShowTodoDialog } = useModalStore();
     const { showToast } = useToastStore();
 
-    const [filter, setFilter] = useState<Array<any>>(FILTER_LIST.map(f => f.value));
+    const [filter, setFilter] = useState<Array<string>>(FILTER_LIST.map(f => f.value));
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const [dateAnchorEl, setDateAnchorEl] = useState<null | HTMLElement>(null);
-    const [myTodoListAll, setMyTodoListAll] = useState<Array<any>>([]);
+    const [myTodoListAll, setMyTodoListAll] = useState<Array<TodoListInterface>>([]);
     const [filterDate, setFilterDate] = useState<FilterDateInterface>({
         startVal: null,
         endVal: null
@@ -60,8 +81,8 @@ const TodoListAll: React.FC = () => {
     const [checkFilterDate, setCheckFilterDate] = useState<boolean>(true);
 
     const dateRef = useRef<HTMLDivElement | null>(null);
-    const startDate = useRef<HTMLDivElement | null>(null);
-    const endDate = useRef<HTMLDivElement | null>(null);
+    const startDate = useRef<HTMLInputElement | null>(null);
+    const endDate = useRef<HTMLInputElement | null>(null);
 
     const open = Boolean(anchorEl);
     const dateOpen = Boolean(dateAnchorEl);
@@ -168,7 +189,7 @@ const TodoListAll: React.FC = () => {
         setFilter(FILTER_LIST.map(f => f.value));
     };
 
-    const stopLabelEvt = (event: any) => {
+    const stopLabelEvt = (event: React.MouseEvent<HTMLLabelElement, MouseEvent>) => {
         event.preventDefault();
         event.stopPropagation();
     };
@@ -271,7 +292,7 @@ const TodoListAll: React.FC = () => {
                                                 },
                                                 "& fieldset": { borderColor: "#3788d8" }
                                             }}
-                                            inputRef={(e: any) => startDate.current = e}
+                                            inputRef={startDate}
                                             localeText={{
                                                 toolbarTitle: '날짜 선택',
                                                 cancelButtonLabel: '취소',
@@ -307,7 +328,7 @@ const TodoListAll: React.FC = () => {
                                                 },
                                                 "& fieldset": { borderColor: "#3788d8" }
                                             }}
-                                            inputRef={(e: any) => endDate.current = e}
+                                            inputRef={endDate}
                                             localeText={{
                                                 toolbarTitle: '날짜 선택',
                                                 cancelButtonLabel: '취소',
@@ -394,9 +415,14 @@ const TodoListAll: React.FC = () => {
             <div style={{ width: "100%", height: "calc(92% - 2.5rem)", overflowY: "auto" }}>
                 {
                     (myTodoListAll.length > 0) ?
-                        myTodoListAll.map((i) => {
-                            const endDate: string = i.allDay ? dayjs(i.end).add(-1, 'day').format('YYYY-MM-DD') : i.end.split('T')[0];
-                            const endDday: number = dayjs(endDate).startOf('day').diff(dayjs().startOf('day'), 'day');
+                        myTodoListAll.sort((a, b) => {
+                            const dateA = new Date(a.end.split('T')[0]);
+                            const dateB = new Date(b.end.split('T')[0]);
+
+                            return dateA.getTime() - dateB.getTime();
+                        }).map((i) => {
+                            const endDay: string = i.allDay ? dayjs(i.end).add(-1, 'day').format('YYYY-MM-DD') : i.end.split('T')[0];
+                            const endDday: number = dayjs(endDay).startOf('day').diff(dayjs().startOf('day'), 'day');
 
                             return (
                                 <div key={i.id} className="p-2 border border-gray-300 rounded-xl shadow mb-3 flex cursor-pointer hover:bg-gray-100" onClick={() => handleClickTodo(i.id)}>
@@ -414,7 +440,7 @@ const TodoListAll: React.FC = () => {
                                             }
                                         </div>
                                         <div className="flex justify-between">
-                                            <div>{`종료일 ${endDate}`}</div>
+                                            <div>{`종료일 ${endDay}`}</div>
                                             <div>
                                                 {
                                                     (endDday > 0) ?

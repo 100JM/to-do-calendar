@@ -4,12 +4,33 @@ import useDateStore from '../store/date';
 import useModalStore from '../store/modal';
 import dayjs from 'dayjs';
 
+interface TodoListInterface {
+    id: string;
+    title: string;
+    allDay: boolean;
+    start: string;
+    end: string;
+    color: string;
+    colorName: string;
+    description: string;
+    important: boolean;
+    display: string;
+    koreaLat: number;
+    koreaLng: number;
+    overseasLat: number;
+    overseasLng: number;
+    locationName: string;
+    overseaLocationName: string;
+    isKorea: boolean;
+    user: string;
+}
+
 const ImportantTodoList: React.FC = () => {
     const { data: session } = useSession();
     const { todoList, setSelectedDateEventInfo } = useDateStore();
     const { setShowAddArea, setIsTodoButton, setShowTodoDialog } = useModalStore();
 
-    const [ importantMyTodoList, setImportantMyTodoList ] = useState<Array<any>>([]);
+    const [importantMyTodoList, setImportantMyTodoList] = useState<Array<TodoListInterface>>([]);
 
     const handleClickImportantTodo = (id: string) => {
         setSelectedDateEventInfo(id);
@@ -21,7 +42,7 @@ const ImportantTodoList: React.FC = () => {
     useEffect(() => {
         const myList = todoList.filter((todo) => {
             return todo.important === true;
-        }).sort((a,b) => {
+        }).sort((a, b) => {
             const dateA = new Date(a.end.split('T')[0]);
             const dateB = new Date(b.end.split('T')[0]);
 

@@ -42,7 +42,7 @@ const UserDialog: React.FC = () => {
         important: 0,
     });
 
-    const comfirmComment: any = {
+    const comfirmComment = {
         logoutTitle: '로그아웃',
         logoutBody: '로그아웃 하시겠습니까?\n완료된 후 로그인 페이지로 이동합니다.',
         disconnectTitle: '연결 해제',

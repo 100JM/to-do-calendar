@@ -1,12 +1,16 @@
 import { create } from "zustand";
-import toast from "react-hot-toast";
+import toast, { ToastOptions } from "react-hot-toast";
+
+interface CustomToastOptions extends ToastOptions {
+    type?: 'success' | 'error' | 'loading' | 'default';
+}
 
 interface ToastStore {
-    showToast: (msg: string, option:any) => void;
+    showToast: (msg: string, option: CustomToastOptions) => void;
 }
 
 const useToastStore = create<ToastStore>(() => ({
-    showToast: (msg: string, option:any) => {
+    showToast: (msg: string, option: CustomToastOptions) => {
         toast(msg, option);
     }
 }));

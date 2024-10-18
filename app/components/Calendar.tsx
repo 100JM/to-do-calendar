@@ -107,7 +107,7 @@ const Calendar: React.FC = () => {
                     arg.dateStr < dayjs(evt.endStr.split('T')[0]).format('YYYY-MM-DD');
             }
         });
-
+        console.log(selectedDateEvt);
         setClickedDate(arg.dateStr);
         setShowTodoDialog(true);
         setSelectedDateEventList(selectedDateEvt);

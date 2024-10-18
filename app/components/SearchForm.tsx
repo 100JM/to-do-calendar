@@ -13,6 +13,27 @@ import { AnimatePresence, motion } from 'framer-motion';
 import SearchIcon from '@mui/icons-material/Search';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
+interface TodoListInterface {
+    id: string;
+    title: string;
+    allDay: boolean;
+    start: string;
+    end: string;
+    color: string;
+    colorName: string;
+    description: string;
+    important: boolean;
+    display: string;
+    koreaLat: number;
+    koreaLng: number;
+    overseasLat: number;
+    overseasLng: number;
+    locationName: string;
+    overseaLocationName: string;
+    isKorea: boolean;
+    user: string;
+}
+
 const SearchForm: React.FC = () => {
     const { data: session, status } = useSession();
 
@@ -23,7 +44,7 @@ const SearchForm: React.FC = () => {
     const { setIsFadeIn } = useCalendarMenu();
     const { todoList, setSelectedDateEventInfo } = useDateStore();
 
-    const [searchedmyTodoList, setSearchedmyTodoList] = useState<Array<any>>([]);
+    const [searchedmyTodoList, setSearchedmyTodoList] = useState<Array<TodoListInterface>>([]);
 
     const handleBackBtn = () => {
         router.push('calendar');

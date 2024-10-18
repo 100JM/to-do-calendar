@@ -1,6 +1,47 @@
 import { mutate } from 'swr';
 
-export const UseAddTodo = async (info: any, userId: string | undefined) => {
+interface TodoInterface {
+    title: string;
+    allDay: boolean;
+    start: string;
+    end: string;
+    color: string;
+    colorName: string;
+    description: string;
+    important: boolean;
+    display: string;
+    koreaLat: number;
+    koreaLng: number;
+    overseasLat: number;
+    overseasLng: number;
+    locationName: string;
+    overseaLocationName: string;
+    isKorea: boolean;
+    user: string;
+}
+
+interface UpdatedTodoInterface {
+    id: string;
+    title: string;
+    allDay: boolean;
+    start: string;
+    end: string;
+    color: string;
+    colorName: string;
+    description: string;
+    important: boolean;
+    display: string;
+    koreaLat: number;
+    koreaLng: number;
+    overseasLat: number;
+    overseasLng: number;
+    locationName: string;
+    overseaLocationName: string;
+    isKorea: boolean;
+    user: string;
+}
+
+export const UseAddTodo = async (info: TodoInterface, userId: string | undefined) => {
     const url = `${process.env.NEXT_PUBLIC_MOCKAPI}?user=${userId}`;
 
     try {
@@ -24,7 +65,7 @@ export const UseAddTodo = async (info: any, userId: string | undefined) => {
     }
 };
 
-export const UseUpdateTodo = async (info: any, userId: string | undefined, id: string) => {
+export const UseUpdateTodo = async (info: UpdatedTodoInterface, userId: string | undefined, id: string) => {
     const url = process.env.NEXT_PUBLIC_MOCKAPI;
 
     try {
