@@ -5,6 +5,7 @@
   <div style="font-weight: 700; font-size: 15px; text-align: left; color: #282d33;">- 카카오 & 구글 로그인 지원</div>
   <div style="font-weight: 700; font-size: 15px; text-align: left; color: #282d33;">- 모바일 최적화</div>
   <div style="font-weight: 700; font-size: 15px; text-align: left; color: #282d33;">- Next.js</div>
+  <div style="font-weight: 700; font-size: 15px; text-align: left; color: #282d33;">- Vercel 배포 도메인: https://100jm-to-do-calendar.vercel.app</div>
 </div>
 <div style="text-align: left;">
   <h2 style="border-bottom: 1px solid #d8dee4; color: #282d33;"> 🔍 화면 & 기능 </h2> <br> 
@@ -51,7 +52,7 @@
         <sub><b>일정 검색</b></sub>
       </td>
       <td align="center" width="33%">
-        <img src="https://github.com/user-attachments/assets/7df803e6-6262-448c-b345-f35d6b7c4a67" width="100%"><br>
+        <img src="https://github.com/user-attachments/assets/b186f505-e0c6-44a0-85e9-ec55c2bc9a36" width="100%"><br>
         <sub><b>카카오 계정 연결 해제 & 사용자 로그아웃</b></sub>
       </td>
     </tr>
