@@ -24,7 +24,7 @@ export const metadata: Metadata = {
     description: "개인 일정을 관리하고 자신만의 달력을 만들어보세요.",
     images: [
       {
-        url: '/images/main_logo.png',
+        url: 'https://100jm-to-do-calenda.vercel.app/images/main_logo.png',
         alt: 'main_logo',
       },
     ],
