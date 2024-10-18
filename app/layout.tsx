@@ -24,7 +24,7 @@ export const metadata: Metadata = {
     description: "개인 일정을 관리하고 자신만의 달력을 만들어보세요.",
     images: [
       {
-        url: 'https://100jm-to-do-calendar.vercel.app/images/openGraph_logo.png',
+        url: 'https://100jm-to-do-calendar.vercel.app/images/openGraph_image.png',
         alt: 'main_logo',
         width: 1200,
         height: 630,
@@ -40,7 +40,7 @@ export const metadata: Metadata = {
     description: "개인 일정을 관리하고 자신만의 달력을 만들어보세요.",
     images: [
       {
-        url: 'https://100jm-to-do-calendar.vercel.app/images/openGraph_logo.png',
+        url: 'https://100jm-to-do-calendar.vercel.app/images/openGraph_image.png',
         alt: 'main_logo',
         width: 1200,
         height: 630,

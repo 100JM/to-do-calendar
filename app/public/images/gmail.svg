@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<svg width="24" height="24" xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg">
+ <title>Gmail</title>
+ <g class="layer">
+  <title>Layer 1</title>
+  <path d="m24,5.46l0,13.91c0,0.9 -0.73,1.63 -1.64,1.63l-3.81,0l0,-9.27l-6.55,4.91l-6.54,-4.91l0,9.27l-3.82,0a1.64,1.64 0 0 1 -1.64,-1.63l0,-13.91c0,-2.03 2.31,-3.18 3.93,-1.97l1.53,1.15l6.54,4.91l6.55,-4.91l1.52,-1.15c1.62,-1.21 3.93,-0.06 3.93,1.97z" fill="#ea4335" id="svg_1"/>
+ </g>
+</svg>
