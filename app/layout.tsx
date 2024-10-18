@@ -12,24 +12,25 @@ const ibmPlexSansKr = IBM_Plex_Sans_KR({
 export const viewport = {
   width: 'device-width',
   initialScale: 1,
-  maximumScale: 1,
 }
 
 export const metadata: Metadata = {
-  title: "TO-DO CALENDAR",
+  metadataBase: new URL('https://100jm-to-do-calendar.vercel.app'),
+  title: "TO-DO CALENDAR: TO-DO 캘린더",
   description: "개인 일정을 관리하고 자신만의 달력을 만들어보세요.",
-  keywords: ['calendar', '달력', 'to-do', '일정'],
+  keywords: ['calendar', '달력', 'to-do', '일정', 'TO-DO 캘린더', 'TO-DO CALENDAR'],
   openGraph: {
     title: 'TO-DO CALENDAR🗓️',
     description: "개인 일정을 관리하고 자신만의 달력을 만들어보세요.",
     images: [
       {
-        url: 'https://100jm-to-do-calenda.vercel.app/images/main_logo.png',
+        url: '/images/main_logo.png',
         alt: 'main_logo',
       },
     ],
     locale: 'ko_KR',
     type: 'website',
+    url: 'https://100jm-to-do-calendar.vercel.app',
   },
   robots: {
     index: true,
