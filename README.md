@@ -11,7 +11,7 @@
   <table>
     <tr>
       <td align="center" width="33%">
-        <img src="https://github.com/user-attachments/assets/bb904448-0740-4da5-b364-548c29df34f7" width="100%"><br>
+        <img src="https://github.com/user-attachments/assets/655e3dfb-a6d0-4935-af41-37b05de471ac" width="100%"><br>
         <sub><b>메인 화면</b></sub>
       </td>
       <td align="center" width="33%">
