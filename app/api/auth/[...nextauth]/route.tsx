@@ -7,6 +7,11 @@ const handler = NextAuth({
         KakaoProvider({
             clientId: process.env.KAKAO_CLIENT_ID as string,
             clientSecret: process.env.KAKAO_CLIENT_SECRET as string,
+            authorization: {
+                params: {
+                  prompt: 'login consent' // 매번 로그인 동의 화면 표시
+                }
+            }
         }),
         GoogleProvider({
             clientId: process.env.GOOGLE_CLIENT_ID as string,
