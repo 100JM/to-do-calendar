@@ -20,11 +20,11 @@ export const metadata: Metadata = {
   description: "개인 일정을 관리하고 자신만의 달력을 만들어보세요.",
   keywords: ['calendar', '달력', 'to-do', '일정', 'TO-DO 캘린더', 'TO-DO CALENDAR'],
   openGraph: {
-    title: 'TO-DO CALENDAR🗓️',
+    title: 'TO-DO CALENDAR🗓️: TO-DO 캘린더',
     description: "개인 일정을 관리하고 자신만의 달력을 만들어보세요.",
     images: [
       {
-        url: '/images/main_logo.png',
+        url: 'https://100jm-to-do-calendar.vercel.app/images/main_logo.png',
         alt: 'main_logo',
       },
     ],
@@ -32,14 +32,24 @@ export const metadata: Metadata = {
     type: 'website',
     url: 'https://100jm-to-do-calendar.vercel.app',
   },
+  twitter: {
+    title: 'TO-DO CALENDAR🗓️: TO-DO 캘린더',
+    description: "개인 일정을 관리하고 자신만의 달력을 만들어보세요.",
+    images: [
+      {
+        url: 'https://100jm-to-do-calendar.vercel.app/images/main_logo.png',
+        alt: 'main_logo',
+      },
+    ],
+  },
   robots: {
     index: true,
     follow: true,
   },
-  other: {
-    'google-site-verification': 'verification-code', // 구글 서치 콘솔용
-    'naver-site-verification': 'verification-code',  // 네이버 서치어드바이저용
-  },
+  // other: {
+  //   'google-site-verification': 'verification-code', // 구글 서치 콘솔용
+  //   'naver-site-verification': 'verification-code',  // 네이버 서치어드바이저용
+  // },
 };
 
 // declare global {
@@ -58,10 +68,10 @@ export default function RootLayout({
       <body
         className={ibmPlexSansKr.className}
       >
-        <Script 
+        <Script
           async
-          src="https://t1.kakaocdn.net/kakao_js_sdk/2.7.2/kakao.min.js" 
-          integrity="sha384-TiCUE00h649CAMonG018J2ujOgDKW/kVWlChEuu4jK2vxfAAD0eZxzCKakxg55G4" 
+          src="https://t1.kakaocdn.net/kakao_js_sdk/2.7.2/kakao.min.js"
+          integrity="sha384-TiCUE00h649CAMonG018J2ujOgDKW/kVWlChEuu4jK2vxfAAD0eZxzCKakxg55G4"
           crossOrigin="anonymous"
           strategy="afterInteractive"
         />
