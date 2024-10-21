@@ -98,16 +98,17 @@ const Calendar: React.FC = () => {
 
         const selectedDateEvt = todoEventList.filter((evt) => {
             if (!evt.allDay) {
+                const evtEndStr = evt.endStr ? evt.endStr : evt.startStr;
                 return dayjs(evt.startStr.split('T')[0]).format('YYYY-MM-DD') <= arg.dateStr
                     &&
-                    arg.dateStr <= dayjs(evt.endStr.split('T')[0]).format('YYYY-MM-DD');
+                    arg.dateStr <= dayjs(evtEndStr.split('T')[0]).format('YYYY-MM-DD');
             } else {
                 return dayjs(evt.startStr.split('T')[0]).format('YYYY-MM-DD') <= arg.dateStr
                     &&
                     arg.dateStr < dayjs(evt.endStr.split('T')[0]).format('YYYY-MM-DD');
             }
         });
-        console.log(selectedDateEvt);
+
         setClickedDate(arg.dateStr);
         setShowTodoDialog(true);
         setSelectedDateEventList(selectedDateEvt);
