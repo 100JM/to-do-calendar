@@ -2,6 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --fc-border-color: #f4f5f6;
+}
+
 html, body, #root {
   overflow: hidden;
   width: 100%;
@@ -14,6 +18,26 @@ i {
 
 .fc {
   height: 92%;
+}
+
+.fc .fc-scrollgrid {
+  border-radius: 10px;
+}
+
+.fc thead tr:first-child th:first-child {
+  border-top-left-radius: 10px;
+}
+
+.fc thead tr:first-child th:last-child {
+  border-top-right-radius: 10px;
+}
+
+.fc tbody tr:last-child td:first-child {
+  border-bottom-left-radius: 10px;
+}
+
+.fc tbody tr:last-child td:last-child {
+  border-bottom-right-radius: 10px;
 }
 
 .fc-header-toolbar {
@@ -207,4 +231,12 @@ i {
   font-weight: 400;
   font-style: normal;
   color: #3788d8;
+}
+
+.fc-day-sun {
+  color: #e73b3b;
+}
+
+.fc-day-sat {
+  color: #2e74f5;
 }
