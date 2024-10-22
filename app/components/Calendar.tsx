@@ -224,7 +224,7 @@ const Calendar: React.FC = () => {
 
     return (
         <>
-            {status === 'unauthenticated' && isLoading ?
+            {status === 'unauthenticated' && !isLoading ?
                 null
                 :
                 <AnimatePresence>

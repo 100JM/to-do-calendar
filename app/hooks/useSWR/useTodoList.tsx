@@ -18,13 +18,18 @@ const fetcher = async (url: string) => {
 
 const UseTodoList = (userId: string | undefined) => {
     const { setTodoList } = useDateStore();
+    const maxRetryCount = 3;
 
     const { data, error, isLoading } = useSWR(
         userId ? `${process.env.NEXT_PUBLIC_MOCKAPI}?user=${userId}` : null, 
         fetcher,
         {
-            onErrorRetry(error) {
-                if (error.status === 404) return
+            onErrorRetry(error, _key, _config, revalidate, { retryCount }) {
+                if (!error || retryCount >= maxRetryCount) {
+                    return;
+                }
+
+                setTimeout(() => revalidate({ retryCount: retryCount + 1 }), 1000);
             },
         }
     );
