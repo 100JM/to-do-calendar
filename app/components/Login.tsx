@@ -59,16 +59,16 @@ const Login: React.FC = () => {
                     >
                         <div className="w-full h-full flex justify-center items-center">
                             <button
-                                className="w-1/2 h-11 mr-2 flex justify-center items-center relative max-w-60"
+                                className="w-1/2 h-11 mr-2 flex justify-center items-center relative max-w-48"
                                 onClick={() => signIn('kakao', { callbackUrl: '/calendar' })}
                             >
-                                <Image src={kakaoLoginImg} alt='kakao_login' priority fill />
+                                <Image src={kakaoLoginImg} alt="kakao_login" priority fill sizes="width: 100%" />
                             </button>
                             <button
-                                className="w-1/2 h-11 ml-2 flex justify-center items-center relative max-w-60"
+                                className="w-1/2 h-11 ml-2 flex justify-center items-center relative max-w-48"
                                 onClick={() => signIn('google', { callbackUrl: '/calendar' })}
                             >
-                                <Image src={googleLoginImg} alt='google_login' priority fill />
+                                <Image src={googleLoginImg} alt="google_login" priority fill sizes="width: 100%" />
                             </button>
                         </div>
                     </motion.div>
