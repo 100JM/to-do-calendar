@@ -10,6 +10,8 @@ import kakaoLoginImg from '../public/images/kakao_login_large_narrow.png';
 import googleLoginImg from '../public/images/google_login.png';
 import { AnimatePresence, motion } from 'framer-motion';
 
+import CircularProgress from '@mui/joy/CircularProgress';
+
 const Login: React.FC = () => {
     const router = useRouter();
     const { status } = useSession();
@@ -33,9 +35,19 @@ const Login: React.FC = () => {
 
     return (
         <>
-            {status === 'authenticated' ?
+            {
+                status === 'loading' &&
                 null
-                : <AnimatePresence>
+            }
+            {
+                status === 'authenticated' &&
+                <div className="w-full h-1/3 flex justify-center items-center">
+                    <CircularProgress color="neutral" variant="soft" size="lg" />
+                </div>
+            }
+            {
+                status === 'unauthenticated' &&
+                <AnimatePresence>
                     <motion.div
                         key="login"
                         variants={fadeVariants}
@@ -44,7 +56,7 @@ const Login: React.FC = () => {
                         exit="exit"
                         transition={fadeTransitionSettings}
                         className="w-full h-1/3"
-                        >
+                    >
                         <div className="w-full h-full flex justify-center items-center">
                             <button
                                 className="w-1/2 h-11 mr-2 flex justify-center items-center relative max-w-60"
