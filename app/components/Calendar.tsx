@@ -2,7 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
-import { useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 import UseTodoList from '../hooks/useSWR/useTodoList';
 import useModalStore from '../store/modal';
@@ -21,7 +21,8 @@ import koLocale from '@fullcalendar/core/locales/ko';
 import { AnimatePresence, motion } from 'framer-motion';
 
 import sanitizeHtml from 'sanitize-html';
-import dayjs from 'dayjs';
+import dayjs, { Dayjs } from 'dayjs';
+import 'dayjs/locale/ko';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import BasicProfile from '../public/images/basic_profile.png';
 
@@ -36,6 +37,10 @@ import FormatListBulletedIcon from '@mui/icons-material/FormatListBulleted';
 import SpeedDial from '@mui/material/SpeedDial';
 import SpeedDialIcon from '@mui/material/SpeedDialIcon';
 import SpeedDialAction from '@mui/material/SpeedDialAction';
+import Dialog from '@mui/material/Dialog';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { DateCalendar } from '@mui/x-date-pickers/DateCalendar';
 
 const Calendar: React.FC = () => {
     const router = useRouter();
@@ -45,7 +50,12 @@ const Calendar: React.FC = () => {
     const { setShowTodoDialog, setIsTodoButton, setShowAddArea, setShowUserDialog } = useModalStore();
     const { setClickedDate, setTodayDate, todoList, setSelectedDateEventList } = useDateStore();
 
+    const [showDatePicker, setShowDatePicker] = useState<boolean>(false);
+    const [calendarTitleYear, setCalendarTitleYear] = useState<Dayjs>(dayjs());
+    const [calendarTitleDate, setCalendarTitleDate] = useState<Dayjs>(dayjs());
+
     const logOutBtnRef = useRef<HTMLButtonElement | null>(null);
+    const calendarRef = useRef<FullCalendar>(null);
 
     const slideVariants = {
         hidden: { x: '-100%', opacity: 0 },
@@ -133,6 +143,41 @@ const Calendar: React.FC = () => {
         setTodayDate();
     };
 
+    const handleClickTodayButton = () => {
+        if (calendarTitleDate.format('YYYY-MM') !== dayjs().format('YYYY-MM')) {
+            setCalendarTitleDate(dayjs());
+            calendarRef.current?.getApi().gotoDate(dayjs().format('YYYY-MM'));
+        }
+    };
+
+    const handleClickNextPrevButton = (btn: string) => {
+        if (btn === 'next') {
+            const nextMonth = calendarTitleDate.add(1, 'month');
+            setCalendarTitleDate(nextMonth);
+            calendarRef.current?.getApi().gotoDate(nextMonth.format('YYYY-MM'));
+        } else {
+            const prevMonth = calendarTitleDate.add(-1, 'month');
+            setCalendarTitleDate(prevMonth);
+            calendarRef.current?.getApi().gotoDate(prevMonth.format('YYYY-MM'));
+        }
+    };
+
+    const handleClickTitle = () => {
+        setShowDatePicker(true);
+    };
+
+    const handleChangeTitleYear = (e: Dayjs) => {
+        setCalendarTitleYear(e);
+    };
+
+    const handleChangeTitle = (e: Dayjs) => {
+        if (calendarTitleYear) {
+            setCalendarTitleDate(dayjs(`${calendarTitleYear.year()}-${e.month()+1}`));
+            calendarRef.current?.getApi().gotoDate(dayjs(`${calendarTitleYear.year()}-${e.month()+1}`).format('YYYY-MM'));
+            setShowDatePicker(false);
+        }
+    };
+
     const { isLoading } = UseTodoList(session?.userId);
 
     useEffect(() => {
@@ -144,24 +189,24 @@ const Calendar: React.FC = () => {
 
             if (typeof window !== 'undefined') {
                 logOutBtnRef.current = document.querySelector('.fc-logout-button');
-    
+
                 const userImg = (session?.user?.image) ? session.user.image : BasicProfile.src;
                 const userName = (session?.user?.name) ? `${session.user?.name} 님` : '';
-    
+
                 if (logOutBtnRef.current && bottomMenu === 'calendar') {
                     const unsafeHtml = `
                     <div class="no-user-img">
                         <img class="default-person-img" src=${userImg} /><span>${userName}</span>
                     </div>
                 `;
-    
+
                     const cleanHtml = sanitizeHtml(unsafeHtml, {
                         allowedTags: ['div', 'img', 'span'],
                         allowedAttributes: {
                             '*': ['class', 'src', 'alt'],
                         },
                     });
-    
+
                     ((logOutBtnRef.current) as HTMLButtonElement).innerHTML = cleanHtml;
                 }
             }
@@ -197,6 +242,7 @@ const Calendar: React.FC = () => {
                     >
                         {bottomMenu === 'calendar' &&
                             <FullCalendar
+                                ref={calendarRef}
                                 plugins={[dayGridPlugin, interactionPlugin]}
                                 initialView="dayGridMonth"
                                 editable={false}
@@ -204,15 +250,31 @@ const Calendar: React.FC = () => {
                                 customButtons={{
                                     searchButton: {
                                         icon: 'bi bi-search',
-                                        click: () => { handleSearchBtn() },
+                                        click: handleSearchBtn,
                                     },
                                     logout: {
-                                        click: () => { handleUserBtn() }
+                                        click: handleUserBtn
                                     },
+                                    titleButton: {
+                                        text: `${dayjs(calendarTitleDate).format('YYYY년 MM월')}`,
+                                        click: handleClickTitle,
+                                    },
+                                    todayButton: {
+                                        text: '오늘',
+                                        click: handleClickTodayButton
+                                    },
+                                    nextButton: {
+                                        icon: 'fc-icon fc-icon-chevron-right',
+                                        click: () => handleClickNextPrevButton('next'),
+                                    },
+                                    prevButton: {
+                                        icon: 'fc-icon fc-icon-chevron-left',
+                                        click: () => handleClickNextPrevButton('prev'),
+                                    }
                                 }}
                                 headerToolbar={{
-                                    left: 'prev,next today logout',
-                                    center: 'title',
+                                    left: 'prevButton,nextButton todayButton logout',
+                                    center: 'titleButton',
                                     right: 'searchButton',
                                 }}
                                 dateClick={dateClickEvt}
@@ -316,7 +378,26 @@ const Calendar: React.FC = () => {
                     </motion.div>
                 </AnimatePresence>
             }
-
+            {showDatePicker && <Dialog
+                open={showDatePicker}
+                onClose={() => setShowDatePicker(false)}
+                fullWidth={false}
+                maxWidth='xs'
+            >
+                <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale={dayjs.locale('ko')}>
+                    <DateCalendar
+                        showDaysOutsideCurrentMonth
+                        views={['year', 'month']}
+                        openTo="year"
+                        sx={{
+                            maxWidth: '310px'
+                        }}
+                        value={calendarTitleDate}
+                        onYearChange={handleChangeTitleYear}
+                        onMonthChange={handleChangeTitle}
+                    />
+                </LocalizationProvider>
+            </Dialog>}
         </>
     );
 };
