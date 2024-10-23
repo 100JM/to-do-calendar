@@ -16,11 +16,11 @@ export const viewport = {
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://100jm-to-do-calendar.vercel.app'),
-  title: 'TO-DO CALENDAR🗓️: TO-DO 캘린더',
+  title: 'TO-DO 캘린더📝',
   description: '개인 일정을 관리하고 자신만의 달력을 만들어보세요.',
   keywords: ['calendar', '달력', 'to-do', '일정', 'TO-DO 캘린더', 'TO-DO CALENDAR'],
   openGraph: {
-    title: 'TO-DO CALENDAR🗓️: TO-DO 캘린더',
+    title: 'TO-DO 캘린더📝',
     description: "개인 일정을 관리하고 자신만의 달력을 만들어보세요.",
     images: [
       {
@@ -33,10 +33,10 @@ export const metadata: Metadata = {
     locale: 'ko_KR',
     type: 'website',
     url: 'https://100jm-to-do-calendar.vercel.app',
-    siteName: 'TO-DO CALENDAR🗓️: TO-DO 캘린더'
+    siteName: 'TO-DO 캘린더📝'
   },
   twitter: {
-    title: 'TO-DO CALENDAR🗓️: TO-DO 캘린더',
+    title: 'TO-DO 캘린더📝',
     description: "개인 일정을 관리하고 자신만의 달력을 만들어보세요.",
     images: [
       {

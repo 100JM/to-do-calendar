@@ -122,7 +122,7 @@ const SearchForm: React.FC = () => {
 
     return (
         <>
-            {status === 'unauthenticated' || isLoading === true ?
+            {status === 'unauthenticated' && !isLoading ?
                 null
                 :
                 <AnimatePresence>
