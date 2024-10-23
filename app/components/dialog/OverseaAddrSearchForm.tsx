@@ -87,6 +87,7 @@ const OverseaAddrSearchForm: React.FC<OverseaAddrSearchFormInterface> = ({ selec
 
     const handleOnEnter = (key: React.KeyboardEvent<HTMLInputElement>) => {
         if (key.key === 'Enter' || key.code === 'Enter') {
+            searchInputRef.current?.blur();
             nominatimAddrSearch();
         }
     };

@@ -75,6 +75,7 @@ const KakaoAddrSearchForm: React.FC<KakaoAddrSearchFormInterface> = ({ selectedC
 
     const handleOnEnter = (key: React.KeyboardEvent<HTMLInputElement>) => {
         if (key.key === 'Enter' || key.code === 'Enter') {
+            searchInputRef.current?.blur();
             searchAddr();
         }
     };
