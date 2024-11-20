@@ -54,19 +54,15 @@ const KakaoAddrSearchForm: React.FC<KakaoAddrSearchFormInterface> = ({ selectedC
         }
 
         try {
-            const keywordResponse = await axios.get('https://dapi.kakao.com/v2/local/search/keyword.json', {
-                params: {
-                    query: searchKeyword,
-                },
-                headers: {
-                    Authorization: `KakaoAK ${process.env.NEXT_PUBLIC_KAKAO_REST_API_KEY}`,
-                }
-            });
+            const addrSearchResponse = await axios.get(`/api/kakao-api?searchKeyword=${searchKeyword}`);
 
-            setSearchedAddr(keywordResponse.data.documents);
-
+            if (addrSearchResponse.status === 200) {
+                setSearchedAddr(addrSearchResponse.data);
+            }
         } catch (error) {
-            console.log('Error: ', error);
+            if (axios.isAxiosError(error)) {
+                console.log('AxiosError: ', error.response?.data.error, error.response?.status);
+            }
         } finally {
             setIsSearchEnd(true);
             setIsLoading(false);
