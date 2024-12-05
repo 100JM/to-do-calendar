@@ -12,7 +12,7 @@
   <table>
     <tr>
       <td align="center" width="33%">
-        <img src="https://github.com/user-attachments/assets/655e3dfb-a6d0-4935-af41-37b05de471ac" width="100%"><br>
+        <img src="https://github.com/user-attachments/assets/9eea9ea7-c83a-4fad-895e-617148ad4521" width="100%"><br>
         <sub><b>메인 화면</b></sub>
       </td>
       <td align="center" width="33%">
