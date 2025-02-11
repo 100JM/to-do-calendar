@@ -1,4 +1,6 @@
-import { Map, MapMarker, ZoomControl, useKakaoLoader } from 'react-kakao-maps-sdk'
+import { Map, MapMarker, useKakaoLoader } from 'react-kakao-maps-sdk'
+// import { useEffect, useState } from 'react';
+// import axios from 'axios'
 
 interface KakaoMapInterface {
     mapCenter: {
@@ -8,6 +10,22 @@ interface KakaoMapInterface {
 }
 
 const KakaoMap: React.FC<KakaoMapInterface> = ({ mapCenter }) => {
+    // const [apiKey, setApiKey] = useState<string | null>(null);
+
+    // useEffect(() => {
+    //     const getKakaoMapApikey = async () => {    
+    //         try {
+    //             const apiKeyResponse = await axios.get('/api/kakao-map-key');
+    //             console.log(apiKeyResponse.data);
+    //             setApiKey(apiKeyResponse.data);
+    //         } catch(error) {
+    //             console.log('Kakao Map error: ', error);
+    //         }
+    //     };
+
+    //     getKakaoMapApikey();
+    // }, []);
+
     const { loading, error } = useKakaoLoader({
         appkey: process.env.NEXT_PUBLIC_KAKAO_MAP_API_KEY || '',
         libraries: ['services'],
@@ -24,7 +42,6 @@ const KakaoMap: React.FC<KakaoMapInterface> = ({ mapCenter }) => {
             draggable={true}
         >
             <MapMarker position={{ lat: mapCenter.lat, lng: mapCenter.lng }} />
-            <ZoomControl position={'TOPLEFT'} />
         </Map>
     )
 }
