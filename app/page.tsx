@@ -21,12 +21,12 @@ export default function Home() {
             <a href="mailto:bjm.931026@gmail.com" target="_blank" rel="noopener noreferrer" className="cursor-pointer">
               <Image src={gmailSvg} alt='Contact via GitHub' className="mx-2" width={24} height={24} />
             </a>
-            <a href="https://velog.io/@100-100" target="_blank" rel="noopener noreferrer" className="cursor-pointer">
+            <a href="https://100-log.vercel.app/" target="_blank" rel="noopener noreferrer" className="cursor-pointer">
               <Image src={velogSvg} alt='Contact via GitHub' className="mx-2" width={24} height={24} />
             </a>
           </div>
         </div>
-      </div>
+      </div>2
       <Login />
     </div>
   );
